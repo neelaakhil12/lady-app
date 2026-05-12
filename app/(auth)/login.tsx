@@ -39,10 +39,10 @@ export default function Login() {
 
   const isSmall = windowWidth < 400;
   const isVerySmall = windowWidth < 360;
-  const responsiveSpacing = isSmall ? SPACING.md : SPACING.xl;
-  const brandFontSize = isVerySmall ? 28 : (isSmall ? 32 : 40);
-  const inputFontSize = isVerySmall ? 16 : 18;
-  const countryCodeWidth = isVerySmall ? 70 : 80;
+  const responsiveSpacing = isVerySmall ? 12 : (isSmall ? SPACING.md : SPACING.xl);
+  const brandFontSize = isVerySmall ? 26 : (isSmall ? 32 : 40);
+  const inputFontSize = isVerySmall ? 15 : 18;
+  const countryCodeWidth = isVerySmall ? 65 : 80;
   
   const filteredCountries = COUNTRY_CODES.filter(c => 
     c.country.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -103,12 +103,12 @@ export default function Login() {
 
           <View style={[styles.formContainer, { width: '100%' }]}>
             <Text style={styles.label}>Enter Mobile Number</Text>
-            <View style={styles.inputContainer}>
+            <View style={[styles.inputContainer, { height: isVerySmall ? 54 : 60 }]}>
               <TouchableOpacity 
                 style={[styles.countryCodeSelector, { width: countryCodeWidth }]}
                 onPress={() => setIsPickerVisible(true)}
               >
-                <Text style={styles.countryCodeText}>{selectedCountry.code}</Text>
+                <Text style={[styles.countryCodeText, { fontSize: isVerySmall ? 14 : 16 }]}>{selectedCountry.code}</Text>
                 <ChevronDown size={14} color={COLORS.textDark} style={{ marginLeft: 2 }} />
               </TouchableOpacity>
               
@@ -121,9 +121,11 @@ export default function Login() {
                 onChangeText={setPhoneNumber}
                 autoFocus
               />
-              <View style={styles.iconWrapper}>
-                <Phone size={18} color={COLORS.textGray} />
-              </View>
+              {!isVerySmall && (
+                <View style={styles.iconWrapper}>
+                  <Phone size={18} color={COLORS.textGray} />
+                </View>
+              )}
             </View>
 
             <Text style={styles.infoText}>
@@ -249,7 +251,6 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.md,
     borderWidth: 1,
     borderColor: COLORS.border,
-    height: 60,
     width: '100%',
     maxWidth: '100%',
     overflow: 'hidden',
@@ -266,7 +267,6 @@ const styles = StyleSheet.create({
   },
   countryCodeText: {
     fontFamily: FONTS.inter.semiBold,
-    fontSize: 16,
     color: COLORS.textDark,
   },
   input: {
