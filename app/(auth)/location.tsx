@@ -14,8 +14,9 @@ import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/consta
 export default function LocationAccess() {
   const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
+  const width = Platform.OS === 'web' ? Math.min(windowWidth, 450) : windowWidth;
 
-  const isSmall = windowWidth < 400;
+  const isSmall = width < 400;
   const responsivePadding = isSmall ? SPACING.md : SPACING.xl;
 
   const handleAllow = () => {

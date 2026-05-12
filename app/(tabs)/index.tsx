@@ -32,7 +32,8 @@ const StatCard = ({ title, value, icon: Icon, color, cardWidth }: any) => (
 export default function Dashboard() {
   const [isOnline, setIsOnline] = useState(false);
   const { user } = useAuthStore();
-  const { width } = useWindowDimensions();
+  const { width: windowWidth } = useWindowDimensions();
+  const width = Platform.OS === 'web' ? Math.min(windowWidth, 450) : windowWidth;
 
   const isSmall = width < 400;
   const responsivePadding = isSmall ? SPACING.md : SPACING.xl;

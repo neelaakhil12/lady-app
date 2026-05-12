@@ -44,6 +44,7 @@ export default function Register() {
   const router = useRouter();
   const { setLoggedIn } = useAuthStore();
   const { width: windowWidth } = useWindowDimensions();
+  const width = Platform.OS === 'web' ? Math.min(windowWidth, 450) : windowWidth;
   const [docs, setDocs] = useState({
     aadhar: 'pending',
     license: 'pending',
@@ -51,7 +52,7 @@ export default function Register() {
     profile: 'pending',
   });
 
-  const isSmall = windowWidth < 400;
+  const isSmall = width < 400;
   const responsivePadding = isSmall ? SPACING.md : SPACING.xl;
 
   const handleUpload = (type: string) => {

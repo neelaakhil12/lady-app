@@ -26,6 +26,7 @@ import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/consta
 export default function Signup() {
   const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
+  const width = Platform.OS === 'web' ? Math.min(windowWidth, 450) : windowWidth;
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -35,7 +36,7 @@ export default function Signup() {
     password: '',
   });
 
-  const isSmall = windowWidth < 400;
+  const isSmall = width < 400;
   const responsivePadding = isSmall ? SPACING.md : SPACING.xl;
 
   const handleSignup = () => {

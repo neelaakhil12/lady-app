@@ -14,8 +14,9 @@ import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../src/constants
 export default function Landing() {
   const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
+  const width = Platform.OS === 'web' ? Math.min(windowWidth, 450) : windowWidth;
 
-  const isSmall = windowWidth < 400;
+  const isSmall = width < 400;
 
   const handleCaptainPress = () => {
     router.push('/onboarding');

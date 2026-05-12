@@ -17,12 +17,13 @@ import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/consta
 export default function OTP() {
   const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
+  const width = Platform.OS === 'web' ? Math.min(windowWidth, 450) : windowWidth;
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef<TextInput[]>([]);
   const [timer, setTimer] = useState(30);
   const [dummyOtp, setDummyOtp] = useState('');
 
-  const isSmall = windowWidth < 400;
+  const isSmall = width < 400;
   const responsivePadding = isSmall ? SPACING.md : SPACING.xl;
 
   useEffect(() => {
