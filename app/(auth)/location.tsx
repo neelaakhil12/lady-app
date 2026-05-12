@@ -4,19 +4,21 @@ import {
   View, 
   Text, 
   TouchableOpacity, 
-  SafeAreaView, 
   Platform,
-  Image
+  useWindowDimensions
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MapPin, Home } from 'lucide-react-native';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, IS_SMALL_SCREEN } from '../../src/constants/theme';
+import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
 
 export default function LocationAccess() {
   const router = useRouter();
+  const { width: windowWidth } = useWindowDimensions();
+
+  const isSmall = windowWidth < 400;
+  const responsivePadding = isSmall ? SPACING.md : SPACING.xl;
 
   const handleAllow = () => {
-    // In a real app, you'd request permissions here
     router.push('/(auth)/register');
   };
 
@@ -25,8 +27,8 @@ export default function LocationAccess() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+    <View style={styles.container}>
+      <View style={[styles.content, { paddingHorizontal: responsivePadding }]}>
         {/* Graphic Area */}
         <View style={styles.graphicContainer}>
           <View style={styles.circleBg}>
@@ -74,7 +76,7 @@ export default function LocationAccess() {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -82,12 +84,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.cardBackground,
+    width: '100%',
+    maxWidth: '100%',
   },
   content: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: SPACING.xl,
+    width: '100%',
   },
   graphicContainer: {
     marginBottom: SPACING.xxl,

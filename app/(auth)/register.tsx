@@ -4,9 +4,9 @@ import {
   View, 
   Text, 
   TouchableOpacity, 
-  SafeAreaView, 
   ScrollView,
-  Image
+  Platform,
+  useWindowDimensions
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../src/store/useAuthStore';
@@ -19,7 +19,7 @@ import {
   User, 
   Car 
 } from 'lucide-react-native';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, IS_SMALL_SCREEN } from '../../src/constants/theme';
+import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
 
 const DocItem = ({ title, icon: Icon, status, onPress }: any) => (
   <TouchableOpacity style={styles.docItem} onPress={onPress}>
@@ -43,6 +43,7 @@ const DocItem = ({ title, icon: Icon, status, onPress }: any) => (
 export default function Register() {
   const router = useRouter();
   const { setLoggedIn } = useAuthStore();
+  const { width: windowWidth } = useWindowDimensions();
   const [docs, setDocs] = useState({
     aadhar: 'pending',
     license: 'pending',
@@ -50,8 +51,10 @@ export default function Register() {
     profile: 'pending',
   });
 
+  const isSmall = windowWidth < 400;
+  const responsivePadding = isSmall ? SPACING.md : SPACING.xl;
+
   const handleUpload = (type: string) => {
-    // Simulate upload
     setDocs(prev => ({ ...prev, [type]: 'uploaded' }));
   };
 
@@ -65,14 +68,20 @@ export default function Register() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+    <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingHorizontal: responsivePadding }
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <ArrowLeft color={COLORS.textDark} size={24} />
         </TouchableOpacity>
 
         <View style={styles.header}>
-          <Text style={styles.title}>Registration</Text>
+          <Text style={[styles.title, { fontSize: isSmall ? 24 : 28 }]}>Registration</Text>
           <Text style={styles.subtitle}>
             Upload your documents for verification to start earning
           </Text>
@@ -124,7 +133,7 @@ export default function Register() {
           <CheckCircle2 color={COLORS.textLight} size={20} />
         </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -132,12 +141,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+    width: '100%',
+    maxWidth: '100%',
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: IS_SMALL_SCREEN ? SPACING.md : SPACING.xl,
     paddingTop: SPACING.lg,
     paddingBottom: SPACING.xl,
+    width: '100%',
+    maxWidth: '100%',
   },
   backButton: {
     width: 40,
@@ -146,15 +158,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.cardBackground,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: IS_SMALL_SCREEN ? SPACING.lg : SPACING.xxl,
+    marginBottom: SPACING.xl,
     ...SHADOWS.light,
   },
   header: {
-    marginBottom: IS_SMALL_SCREEN ? SPACING.lg : SPACING.xxl,
+    marginBottom: SPACING.xl,
   },
   title: {
     fontFamily: FONTS.poppins.bold,
-    fontSize: IS_SMALL_SCREEN ? 24 : 28,
     color: COLORS.textDark,
   },
   subtitle: {
@@ -164,7 +175,7 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xs,
   },
   docsList: {
-    marginBottom: IS_SMALL_SCREEN ? SPACING.lg : SPACING.xxl,
+    marginBottom: SPACING.xl,
   },
   docItem: {
     flexDirection: 'row',
@@ -200,9 +211,9 @@ const styles = StyleSheet.create({
   },
   infoBox: {
     backgroundColor: COLORS.accent + '10',
-    padding: IS_SMALL_SCREEN ? SPACING.md : SPACING.lg,
+    padding: SPACING.md,
     borderRadius: BORDER_RADIUS.md,
-    marginBottom: IS_SMALL_SCREEN ? SPACING.lg : SPACING.xxl,
+    marginBottom: SPACING.xl,
     borderWidth: 1,
     borderColor: COLORS.accent + '30',
   },
