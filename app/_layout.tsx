@@ -65,17 +65,22 @@ export default function RootLayout() {
 
   // If on web, wrap in a container that handles centering and max-width
   if (Platform.OS === 'web') {
+    const isDesktop = windowWidth > 450;
     return (
       <View style={styles.webContainer}>
         <View style={[
           styles.webFrame,
           { 
-            width: windowWidth > 450 ? 450 : '100%',
-            maxWidth: windowWidth > 450 ? 450 : '100%',
-            // Only show shadow and border on desktop
-            borderWidth: windowWidth > 450 ? 1 : 0,
-            borderColor: COLORS.border,
-            ...(windowWidth > 450 ? SHADOWS.heavy : {}),
+            width: isDesktop ? 420 : '100%',
+            maxWidth: isDesktop ? 420 : '100%',
+            height: isDesktop ? '90%' : '100%',
+            borderRadius: isDesktop ? 40 : 0,
+            borderWidth: isDesktop ? 12 : 0,
+            borderColor: '#1a1a1a', // Dark mobile frame color
+            marginTop: isDesktop ? 20 : 0,
+            marginBottom: isDesktop ? 20 : 0,
+            ...(isDesktop ? SHADOWS.heavy : {}),
+            overflow: 'hidden',
           }
         ]}>
           {content}
