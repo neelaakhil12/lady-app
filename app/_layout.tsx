@@ -63,22 +63,28 @@ export default function RootLayout() {
 
   const content = <AppContent />;
 
-  // If on web and screen is large (desktop), wrap in a mobile-style container
-  if (Platform.OS === 'web' && windowWidth > 450) {
+  // If on web, wrap in a container that handles centering and max-width
+  if (Platform.OS === 'web') {
     return (
       <View style={styles.webContainer}>
-        <View style={styles.webFrame}>
+        <View style={[
+          styles.webFrame,
+          { 
+            width: windowWidth > 450 ? 450 : '100%',
+            maxWidth: windowWidth > 450 ? 450 : '100%',
+            // Only show shadow and border on desktop
+            borderWidth: windowWidth > 450 ? 1 : 0,
+            borderColor: COLORS.border,
+            ...(windowWidth > 450 ? SHADOWS.heavy : {}),
+          }
+        ]}>
           {content}
         </View>
       </View>
     );
   }
 
-  return (
-    <View style={{ flex: 1, backgroundColor: COLORS.background }}>
-      {content}
-    </View>
-  );
+  return content;
 }
 
 const styles = StyleSheet.create({
@@ -87,12 +93,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f2f5',
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
   },
   webFrame: {
     height: '100%',
-    width: 450,
     backgroundColor: COLORS.background,
     overflow: 'hidden',
-    ...SHADOWS.heavy,
   },
 });
