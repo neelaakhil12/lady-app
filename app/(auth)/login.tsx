@@ -41,7 +41,8 @@ export default function Login() {
   const isVerySmall = windowWidth < 360;
   const responsiveSpacing = isSmall ? SPACING.md : SPACING.xl;
   const brandFontSize = isVerySmall ? 28 : (isSmall ? 32 : 40);
-  const inputPadding = isVerySmall ? 8 : SPACING.md;
+  const inputFontSize = isVerySmall ? 16 : 18;
+  const countryCodeWidth = isVerySmall ? 70 : 80;
   
   const filteredCountries = COUNTRY_CODES.filter(c => 
     c.country.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -102,24 +103,17 @@ export default function Login() {
 
           <View style={[styles.formContainer, { width: '100%' }]}>
             <Text style={styles.label}>Enter Mobile Number</Text>
-            <View style={[
-              styles.inputContainer, 
-              { 
-                paddingLeft: inputPadding,
-                paddingRight: SPACING.md,
-                width: '100%'
-              }
-            ]}>
+            <View style={styles.inputContainer}>
               <TouchableOpacity 
-                style={styles.countryCodeSelector}
+                style={[styles.countryCodeSelector, { width: countryCodeWidth }]}
                 onPress={() => setIsPickerVisible(true)}
               >
                 <Text style={styles.countryCodeText}>{selectedCountry.code}</Text>
-                <ChevronDown size={14} color={COLORS.textDark} style={{ marginLeft: 4 }} />
+                <ChevronDown size={14} color={COLORS.textDark} style={{ marginLeft: 2 }} />
               </TouchableOpacity>
               
               <TextInput
-                style={styles.input}
+                style={[styles.input, { fontSize: inputFontSize }]}
                 placeholder="00000 00000"
                 keyboardType="phone-pad"
                 maxLength={10}
@@ -127,7 +121,9 @@ export default function Login() {
                 onChangeText={setPhoneNumber}
                 autoFocus
               />
-              <Phone size={20} color={COLORS.textGray} style={styles.inputIcon} />
+              <View style={styles.iconWrapper}>
+                <Phone size={18} color={COLORS.textGray} />
+              </View>
             </View>
 
             <Text style={styles.infoText}>
@@ -265,9 +261,8 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: COLORS.border,
     height: '100%',
-    paddingRight: 10,
-    minWidth: 60,
     justifyContent: 'center',
+    backgroundColor: '#F8F9FA',
   },
   countryCodeText: {
     fontFamily: FONTS.inter.semiBold,
@@ -277,7 +272,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontFamily: FONTS.inter.semiBold,
-    fontSize: 18,
     color: COLORS.textDark,
     paddingHorizontal: 12,
     height: '100%',
@@ -287,8 +281,13 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  iconWrapper: {
+    paddingRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   inputIcon: {
-    marginLeft: 4,
+    // No longer used directly
   },
   infoText: {
     fontFamily: FONTS.inter.regular,
