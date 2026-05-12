@@ -68,23 +68,21 @@ export default function RootLayout() {
     const isDesktop = windowWidth > 450;
     return (
       <View style={styles.webContainer}>
-        <View style={[
-          styles.webFrame,
-          { 
-            width: isDesktop ? 420 : '100%',
-            maxWidth: isDesktop ? 420 : '100%',
-            height: isDesktop ? '90%' : '100%',
-            borderRadius: isDesktop ? 40 : 0,
-            borderWidth: isDesktop ? 12 : 0,
-            borderColor: '#1a1a1a', // Dark mobile frame color
-            marginTop: isDesktop ? 20 : 0,
-            marginBottom: isDesktop ? 20 : 0,
-            ...(isDesktop ? SHADOWS.heavy : {}),
-            overflow: 'hidden',
-          }
-        ]}>
-          {content}
-        </View>
+        {isDesktop ? (
+          <View style={styles.desktopWrapper}>
+            <View style={styles.phoneFrame}>
+              <View style={styles.phoneNotch} />
+              <View style={styles.phoneContent}>
+                {content}
+              </View>
+              <View style={styles.phoneHomeIndicator} />
+            </View>
+          </View>
+        ) : (
+          <View style={styles.mobileWrapper}>
+            {content}
+          </View>
+        )}
       </View>
     );
   }
@@ -95,10 +93,59 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   webContainer: {
     flex: 1,
-    backgroundColor: '#f0f2f5',
+    backgroundColor: '#FFFFFF', // White background as requested
+    width: '100%',
+  },
+  desktopWrapper: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 20,
+  },
+  mobileWrapper: {
+    flex: 1,
     width: '100%',
+    height: '100%',
+  },
+  phoneFrame: {
+    width: 400,
+    height: '95%',
+    maxHeight: 850,
+    backgroundColor: '#000000',
+    borderRadius: 50,
+    borderWidth: 8,
+    borderColor: '#1a1a1a',
+    overflow: 'hidden',
+    ...SHADOWS.heavy,
+    position: 'relative',
+  },
+  phoneNotch: {
+    position: 'absolute',
+    top: 0,
+    left: '50%',
+    marginLeft: -60,
+    width: 120,
+    height: 30,
+    backgroundColor: '#1a1a1a',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    zIndex: 100,
+  },
+  phoneContent: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    marginTop: 0,
+  },
+  phoneHomeIndicator: {
+    position: 'absolute',
+    bottom: 8,
+    left: '50%',
+    marginLeft: -50,
+    width: 100,
+    height: 5,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 10,
+    zIndex: 100,
   },
   webFrame: {
     height: '100%',
