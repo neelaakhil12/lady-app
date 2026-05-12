@@ -8,29 +8,66 @@ import {
   KeyboardAvoidingView, 
   Platform,
   ScrollView,
-  useWindowDimensions
+  useWindowDimensions,
+  Modal,
+  FlatList
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Phone, ChevronRight } from 'lucide-react-native';
+import { Phone, ChevronRight, ChevronDown, Search, X } from 'lucide-react-native';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
+
+const COUNTRY_CODES = [
+  { code: '+91', country: 'India', flag: '🇮🇳' },
+  { code: '+1', country: 'USA', flag: '🇺🇸' },
+  { code: '+44', country: 'UK', flag: '🇬🇧' },
+  { code: '+971', country: 'UAE', flag: '🇦🇪' },
+  { code: '+61', country: 'Australia', flag: '🇦🇺' },
+  { code: '+1', country: 'Canada', flag: '🇨🇦' },
+  { code: '+65', country: 'Singapore', flag: '🇸🇬' },
+  { code: '+49', country: 'Germany', flag: '🇩🇪' },
+  { code: '+33', country: 'France', flag: '🇫🇷' },
+  { code: '+81', country: 'Japan', flag: '🇯🇵' },
+];
 
 export default function Login() {
   const router = useRouter();
-  const { width: windowWidth } = useWindowDimensions();
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState(COUNTRY_CODES[0]);
+  const [isPickerVisible, setIsPickerVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const isSmall = windowWidth < 400;
   const isVerySmall = windowWidth < 360;
   const responsiveSpacing = isSmall ? SPACING.md : SPACING.xl;
   const brandFontSize = isVerySmall ? 28 : (isSmall ? 32 : 40);
-  const inputPadding = isVerySmall ? SPACING.sm : SPACING.md;
-  const countryCodeMargin = isVerySmall ? SPACING.sm : SPACING.md;
+  const inputPadding = isVerySmall ? 8 : SPACING.md;
+  
+  const filteredCountries = COUNTRY_CODES.filter(c => 
+    c.country.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    c.code.includes(searchQuery)
+  );
 
   const handleLogin = () => {
     if (phoneNumber.length === 10) {
       router.push('/(auth)/otp');
     }
   };
+
+  const renderCountryItem = ({ item }: { item: typeof COUNTRY_CODES[0] }) => (
+    <TouchableOpacity 
+      style={styles.countryItem}
+      onPress={() => {
+        setSelectedCountry(item);
+        setIsPickerVisible(false);
+        setSearchQuery('');
+      }}
+    >
+      <Text style={styles.countryFlag}>{item.flag}</Text>
+      <Text style={styles.countryName}>{item.country}</Text>
+      <Text style={styles.countryCodeValue}>{item.code}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -68,19 +105,19 @@ export default function Login() {
             <View style={[
               styles.inputContainer, 
               { 
-                paddingHorizontal: inputPadding,
+                paddingLeft: inputPadding,
+                paddingRight: SPACING.md,
                 width: '100%'
               }
             ]}>
-              <View style={[
-                styles.countryCode, 
-                { 
-                  marginRight: countryCodeMargin, 
-                  paddingRight: countryCodeMargin 
-                }
-              ]}>
-                <Text style={styles.countryCodeText}>+91</Text>
-              </View>
+              <TouchableOpacity 
+                style={styles.countryCodeSelector}
+                onPress={() => setIsPickerVisible(true)}
+              >
+                <Text style={styles.countryCodeText}>{selectedCountry.code}</Text>
+                <ChevronDown size={14} color={COLORS.textDark} style={{ marginLeft: 4 }} />
+              </TouchableOpacity>
+              
               <TextInput
                 style={styles.input}
                 placeholder="00000 00000"
@@ -120,6 +157,44 @@ export default function Login() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Country Code Picker Modal */}
+      <Modal
+        visible={isPickerVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setIsPickerVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { height: windowHeight * 0.7 }]}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Country</Text>
+              <TouchableOpacity onPress={() => setIsPickerVisible(false)}>
+                <X size={24} color={COLORS.textDark} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.searchContainer}>
+              <Search size={20} color={COLORS.textGray} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search country or code"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                autoFocus={Platform.OS === 'web'}
+              />
+            </View>
+
+            <FlatList
+              data={filteredCountries}
+              renderItem={renderCountryItem}
+              keyExtractor={(item, index) => index.toString()}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: SPACING.xl }}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -184,11 +259,15 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...SHADOWS.light,
   },
-  countryCode: {
+  countryCodeSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderRightWidth: 1,
     borderRightColor: COLORS.border,
-    justifyContent: 'center',
     height: '100%',
+    paddingRight: 10,
+    minWidth: 60,
+    justifyContent: 'center',
   },
   countryCodeText: {
     fontFamily: FONTS.inter.semiBold,
@@ -200,7 +279,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.inter.semiBold,
     fontSize: 18,
     color: COLORS.textDark,
-    paddingHorizontal: SPACING.sm,
+    paddingHorizontal: 12,
     height: '100%',
     ...Platform.select({
       web: {
@@ -209,7 +288,7 @@ const styles = StyleSheet.create({
     }),
   },
   inputIcon: {
-    // Margin handled by inputPadding in component
+    marginLeft: 4,
   },
   infoText: {
     fontFamily: FONTS.inter.regular,
@@ -254,5 +333,72 @@ const styles = StyleSheet.create({
   linkText: {
     color: COLORS.primary,
     fontFamily: FONTS.inter.medium,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: COLORS.background,
+    borderTopLeftRadius: BORDER_RADIUS.xl,
+    borderTopRightRadius: BORDER_RADIUS.xl,
+    padding: SPACING.xl,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.xl,
+  },
+  modalTitle: {
+    fontFamily: FONTS.poppins.bold,
+    fontSize: 20,
+    color: COLORS.textDark,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.cardBackground,
+    borderRadius: BORDER_RADIUS.md,
+    paddingHorizontal: SPACING.md,
+    height: 50,
+    marginBottom: SPACING.xl,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: SPACING.sm,
+    fontFamily: FONTS.inter.medium,
+    fontSize: 16,
+    color: COLORS.textDark,
+    ...Platform.select({
+      web: {
+        outlineStyle: 'none',
+      },
+    }),
+  },
+  countryItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: SPACING.md,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  countryFlag: {
+    fontSize: 24,
+    marginRight: SPACING.md,
+  },
+  countryName: {
+    flex: 1,
+    fontFamily: FONTS.inter.medium,
+    fontSize: 16,
+    color: COLORS.textDark,
+  },
+  countryCodeValue: {
+    fontFamily: FONTS.inter.bold,
+    fontSize: 16,
+    color: COLORS.primary,
   },
 });
