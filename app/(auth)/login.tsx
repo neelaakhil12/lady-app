@@ -151,7 +151,6 @@ const styles = StyleSheet.create({
   },
   brandText: {
     fontFamily: FONTS.poppins.bold,
-    // fontSize set dynamically
     color: COLORS.primary,
     marginTop: -5,
   },
@@ -244,33 +243,6 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
     paddingTop: SPACING.xl,
     width: '100%',
-  },
-  footerText: {
-    fontFamily: FONTS.inter.regular,
-    fontSize: 12,
-    color: COLORS.textGray,
-    textAlign: 'center',
-    lineHeight: 18,
-  },
-  linkText: {
-    color: COLORS.primary,
-    fontFamily: FONTS.inter.medium,
-  },
-});
-  buttonDisabled: {
-    backgroundColor: COLORS.textGray + '50',
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  buttonText: {
-    fontFamily: FONTS.poppins.bold,
-    color: COLORS.textLight,
-    fontSize: 18,
-    marginRight: SPACING.sm,
-  },
-  footer: {
-    marginTop: 'auto',
-    paddingTop: SPACING.xl,
   },
   footerText: {
     fontFamily: FONTS.inter.regular,
