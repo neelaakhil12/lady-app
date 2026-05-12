@@ -63,8 +63,8 @@ export default function RootLayout() {
 
   const content = <AppContent />;
 
-  // If on web, wrap in a mobile-style container
-  if (Platform.OS === 'web') {
+  // If on web and screen is large (desktop), wrap in a mobile-style container
+  if (Platform.OS === 'web' && windowWidth > 450) {
     return (
       <View style={styles.webContainer}>
         <View style={styles.webFrame}>
@@ -74,7 +74,11 @@ export default function RootLayout() {
     );
   }
 
-  return content;
+  return (
+    <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+      {content}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -86,8 +90,7 @@ const styles = StyleSheet.create({
   },
   webFrame: {
     height: '100%',
-    width: '100%',
-    maxWidth: 450,
+    width: 450,
     backgroundColor: COLORS.background,
     overflow: 'hidden',
     ...SHADOWS.heavy,

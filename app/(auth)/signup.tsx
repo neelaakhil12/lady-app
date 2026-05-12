@@ -190,12 +190,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+    width: '100%',
   },
   headerNav: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingTop: SPACING.md,
     paddingBottom: SPACING.md,
+    width: '100%',
   },
   backButton: {
     width: 40,
@@ -215,6 +217,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingBottom: SPACING.xl,
+    width: '100%',
   },
   titleContainer: {
     flexDirection: 'row',

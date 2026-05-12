@@ -20,7 +20,9 @@ export default function Login() {
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const isSmall = windowWidth < 400;
+  const isVerySmall = windowWidth < 360;
   const responsiveSpacing = isSmall ? SPACING.md : SPACING.xl;
+  const brandFontSize = isVerySmall ? 28 : (isSmall ? 32 : 40);
 
   const handleLogin = () => {
     if (phoneNumber.length === 10) {
@@ -51,7 +53,7 @@ export default function Login() {
             <Text style={styles.welcomeText}>Welcome to</Text>
             <Text style={[
               styles.brandText,
-              { fontSize: isSmall ? 32 : 40 }
+              { fontSize: brandFontSize }
             ]}>Lady Pilot</Text>
             <Text style={styles.subtitle}>Captain Application</Text>
           </View>
@@ -108,11 +110,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+    width: '100%',
   },
   scrollContent: {
     flexGrow: 1,
     paddingTop: Platform.OS === 'web' ? SPACING.xl : SPACING.xxl * 2,
     paddingBottom: SPACING.xl,
+    width: '100%',
   },
   header: {
     // marginBottom set dynamically

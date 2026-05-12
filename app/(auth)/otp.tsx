@@ -144,10 +144,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+    width: '100%',
   },
   scrollContent: {
     flexGrow: 1,
     paddingTop: SPACING.lg,
+    width: '100%',
   },
   backButton: {
     width: 40,
