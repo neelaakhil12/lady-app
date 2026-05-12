@@ -1,10 +1,7 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|_expo/|favicon.ico|metadata.json).*)",
       "destination": "/index.html"
     }
   ]
