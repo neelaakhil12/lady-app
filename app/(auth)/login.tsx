@@ -23,6 +23,8 @@ export default function Login() {
   const isVerySmall = windowWidth < 360;
   const responsiveSpacing = isSmall ? SPACING.md : SPACING.xl;
   const brandFontSize = isVerySmall ? 28 : (isSmall ? 32 : 40);
+  const inputPadding = isVerySmall ? SPACING.sm : SPACING.md;
+  const countryCodeMargin = isVerySmall ? SPACING.sm : SPACING.md;
 
   const handleLogin = () => {
     if (phoneNumber.length === 10) {
@@ -60,8 +62,8 @@ export default function Login() {
 
           <View style={styles.formContainer}>
             <Text style={styles.label}>Enter Mobile Number</Text>
-            <View style={styles.inputContainer}>
-              <View style={styles.countryCode}>
+            <View style={[styles.inputContainer, { paddingHorizontal: inputPadding }]}>
+              <View style={[styles.countryCode, { marginRight: countryCodeMargin, paddingRight: countryCodeMargin }]}>
                 <Text style={styles.countryCodeText}>+91</Text>
               </View>
               <TextInput
@@ -111,15 +113,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
     width: '100%',
+    maxWidth: '100%',
   },
   scrollContent: {
     flexGrow: 1,
     paddingTop: Platform.OS === 'web' ? SPACING.xl : SPACING.xxl * 2,
     paddingBottom: SPACING.xl,
     width: '100%',
+    maxWidth: '100%',
   },
   header: {
-    // marginBottom set dynamically
+    width: '100%',
   },
   welcomeText: {
     fontFamily: FONTS.poppins.medium,
@@ -140,6 +144,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flex: 1,
+    width: '100%',
   },
   label: {
     fontFamily: FONTS.poppins.medium,
@@ -154,15 +159,14 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.md,
     borderWidth: 1,
     borderColor: COLORS.border,
-    paddingHorizontal: SPACING.md,
     height: 60,
+    width: '100%',
+    maxWidth: '100%',
     ...SHADOWS.light,
   },
   countryCode: {
     borderRightWidth: 1,
     borderRightColor: COLORS.border,
-    paddingRight: SPACING.md,
-    marginRight: SPACING.md,
   },
   countryCodeText: {
     fontFamily: FONTS.inter.semiBold,
@@ -174,6 +178,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.inter.semiBold,
     fontSize: 18,
     color: COLORS.textDark,
+    paddingHorizontal: SPACING.sm,
     ...Platform.select({
       web: {
         outlineStyle: 'none',
@@ -181,7 +186,7 @@ const styles = StyleSheet.create({
     }),
   },
   inputIcon: {
-    marginLeft: SPACING.sm,
+    // Margin handled by inputPadding in component
   },
   infoText: {
     fontFamily: FONTS.inter.regular,
@@ -197,6 +202,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 60,
     borderRadius: BORDER_RADIUS.md,
+    width: '100%',
     ...SHADOWS.medium,
   },
   buttonDisabled: {
