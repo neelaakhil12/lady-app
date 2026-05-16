@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -17,16 +17,24 @@ import {
   Inter_700Bold
 } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
-import { COLORS, SHADOWS } from '../src/constants/theme';
+import { Asset } from 'expo-asset';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { COLORS, DARK_COLORS, SHADOWS } from '../src/constants/theme';
+import { useAuthStore } from '../src/store/useAuthStore';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
 function AppContent() {
+  const { isDarkMode } = useAuthStore();
+  
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }}>
+      <StatusBar style={isDarkMode ? 'light' : 'dark'} />
+      <Stack screenOptions={{ 
+        headerShown: false,
+        contentStyle: { backgroundColor: isDarkMode ? DARK_COLORS.background : COLORS.background }
+      }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="landing" />
         <Stack.Screen name="onboarding" />
@@ -39,6 +47,9 @@ function AppContent() {
 
 export default function RootLayout() {
   const { width: windowWidth } = useWindowDimensions();
+  const { isDarkMode } = useAuthStore();
+  const activeColors = isDarkMode ? DARK_COLORS : COLORS;
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
   const [loaded, error] = useFonts({
     Poppins_400Regular,
     Poppins_500Medium,
@@ -51,53 +62,82 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    console.log('App Root Layout loaded:', { loaded, error });
-    if (loaded || error) {
+    async function prepare() {
+      try {
+        // Preload images
+        const images = [
+          require('../assets/logo.png'),
+          require('../assets/onboarding_bike.png'),
+          require('../assets/onboarding_car.png'),
+          require('../assets/onboarding_auto.png'),
+        ];
+        
+        const cacheImages = images.map(image => {
+          return Asset.fromModule(image).downloadAsync();
+        });
+        
+        // Use a race to avoid getting stuck
+        await Promise.race([
+          Promise.all(cacheImages),
+          new Promise(resolve => setTimeout(resolve, 5000)) // 5s timeout fallback
+        ]);
+        
+        setAssetsLoaded(true);
+      } catch (e) {
+        console.warn('Error preloading assets:', e);
+        setAssetsLoaded(true); // Proceed anyway
+      }
+    }
+
+    prepare();
+  }, []);
+
+  useEffect(() => {
+    if ((loaded && assetsLoaded) || error) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, error]);
+  }, [loaded, assetsLoaded, error]);
 
-  if (!loaded && !error) {
-    return null;
+  if ((!loaded || !assetsLoaded) && !error) {
+    return <View style={{ flex: 1, backgroundColor: activeColors.background }} />;
   }
 
   const content = <AppContent />;
 
-  // If on web, wrap in a container that handles centering and max-width
-  if (Platform.OS === 'web') {
-    return (
-      <View style={styles.webContainer}>
-        <View style={[
-          styles.webFrame,
-          { 
-            width: windowWidth > 450 ? 450 : '100%',
-            maxWidth: windowWidth > 450 ? 450 : '100%',
-            // Only show shadow and border on desktop
-            borderWidth: windowWidth > 450 ? 1 : 0,
-            borderColor: COLORS.border,
-            ...(windowWidth > 450 ? SHADOWS.heavy : {}),
-          }
-        ]}>
-          {content}
-        </View>
+  const layout = Platform.OS === 'web' ? (
+    <View style={[styles.webContainer, { backgroundColor: isDarkMode ? '#000' : '#f0f2f5' }]}>
+      <View style={[
+        styles.webFrame,
+        { 
+          width: windowWidth > 450 ? 450 : '100%',
+          maxWidth: windowWidth > 450 ? 450 : '100%',
+          borderWidth: windowWidth > 450 ? 1 : 0,
+          borderColor: activeColors.border,
+          backgroundColor: activeColors.background,
+          ...(windowWidth > 450 ? SHADOWS.heavy : {}),
+        }
+      ]}>
+        {content}
       </View>
-    );
-  }
+    </View>
+  ) : content;
 
-  return content;
+  return (
+    <SafeAreaProvider style={{ backgroundColor: activeColors.background }}>
+      {layout}
+    </SafeAreaProvider>
+  );
 }
 
 const styles = StyleSheet.create({
   webContainer: {
     flex: 1,
-    backgroundColor: '#f0f2f5',
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
   },
   webFrame: {
     height: '100%',
-    backgroundColor: COLORS.background,
     overflow: 'hidden',
   },
 });

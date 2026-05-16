@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, useWindowDimensions, Platform } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, useWindowDimensions, Platform, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../src/store/useAuthStore';
 import Animated, { 
@@ -18,18 +18,21 @@ const ONBOARDING_DATA = [
     title: 'Empowering Women Captains',
     description: 'Join our community of professional female riders and earn with safety and respect.',
     color: COLORS.primary,
+    image: require('../assets/onboarding_bike.png'),
   },
   {
     id: '2',
     title: 'Flexible Earnings',
     description: 'Work on your own schedule. Track your daily earnings and withdraw anytime.',
     color: COLORS.secondary,
+    image: require('../assets/onboarding_car.png'),
   },
   {
     id: '3',
     title: 'Safe & Secure Platform',
     description: 'Verified passengers and real-time ride monitoring for your complete peace of mind.',
     color: COLORS.accent,
+    image: require('../assets/onboarding_auto.png'),
   },
 ];
 
@@ -55,9 +58,12 @@ const OnboardingItem = ({ item, scrollX, index, width }: any) => {
 
   return (
     <View style={[styles.itemContainer, { width }]}>
-      <Animated.View style={[styles.imagePlaceholder, { backgroundColor: item.color + '20', width: width * 0.7, height: width * 0.7 }, animatedStyle]}>
-        {/* Placeholder for Illustration */}
-        <View style={[styles.circle, { backgroundColor: item.color }]} />
+      <Animated.View style={[styles.imagePlaceholder, { backgroundColor: item.color + '10', width: width * 0.8, height: width * 0.8 }, animatedStyle]}>
+        <Image 
+          source={item.image} 
+          style={styles.onboardingImage}
+          resizeMode="cover"
+        />
       </Animated.View>
       <View style={styles.textContainer}>
         <Text style={[styles.title, { fontSize: width < 400 ? 22 : 28 }]}>{item.title}</Text>
@@ -191,11 +197,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: SPACING.xxl,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: COLORS.textLight + '20',
   },
-  circle: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
+  onboardingImage: {
+    width: '100%',
+    height: '100%',
   },
   textContainer: {
     alignItems: 'center',

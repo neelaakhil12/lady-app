@@ -12,12 +12,18 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react-native';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLORS, DARK_COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
+import { useAuthStore } from '../../src/store/useAuthStore';
 
 export default function OTP() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
   const width = Platform.OS === 'web' ? Math.min(windowWidth, 450) : windowWidth;
+  const { isDarkMode } = useAuthStore();
+  const activeColors = isDarkMode ? DARK_COLORS : COLORS;
+  
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef<TextInput[]>([]);
   const [timer, setTimer] = useState(30);
@@ -62,7 +68,7 @@ export default function OTP() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: activeColors.background }]}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -72,22 +78,25 @@ export default function OTP() {
           style={{ flex: 1 }}
           contentContainerStyle={[
             styles.scrollContent, 
-            { paddingHorizontal: responsivePadding }
+            { 
+              paddingHorizontal: responsivePadding,
+              paddingTop: Platform.OS === 'web' ? SPACING.lg : insets.top + SPACING.lg
+            }
           ]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <ArrowLeft color={COLORS.textDark} size={24} />
+            <ArrowLeft color={activeColors.textDark} size={24} />
           </TouchableOpacity>
 
           <View style={styles.header}>
-            <Text style={[styles.title, { fontSize: isSmall ? 24 : 28 }]}>Verify OTP</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { fontSize: isSmall ? 24 : 28, color: activeColors.textDark }]}>Verify OTP</Text>
+            <Text style={[styles.subtitle, { color: activeColors.textGray }]}>
               Enter the 6-digit code sent to your mobile number
             </Text>
-            <View style={styles.dummyContainer}>
-              <Text style={styles.dummyText}>For testing, use: <Text style={styles.dummyCode}>{dummyOtp}</Text></Text>
+            <View style={[styles.dummyContainer, { backgroundColor: activeColors.primary + '15' }]}>
+              <Text style={[styles.dummyText, { color: activeColors.textGray }]}>For testing, use: <Text style={[styles.dummyCode, { color: activeColors.primary }]}>{dummyOtp}</Text></Text>
             </View>
           </View>
 
@@ -102,6 +111,9 @@ export default function OTP() {
                     width: isSmall ? 38 : 45,
                     height: isSmall ? 50 : 55,
                     fontSize: isSmall ? 18 : 22,
+                    backgroundColor: activeColors.cardBackground,
+                    borderColor: activeColors.border,
+                    color: activeColors.textDark
                   }
                 ]}
                 keyboardType="number-pad"
@@ -109,6 +121,7 @@ export default function OTP() {
                 value={digit}
                 onChangeText={(value) => handleOtpChange(value, index)}
                 onKeyPress={(e) => handleKeyPress(e, index)}
+                placeholderTextColor={activeColors.textGray}
                 autoFocus={index === 0}
               />
             ))}
@@ -116,10 +129,10 @@ export default function OTP() {
 
           <View style={styles.timerContainer}>
             {timer > 0 ? (
-              <Text style={styles.timerText}>Resend OTP in {timer}s</Text>
+              <Text style={[styles.timerText, { color: activeColors.textGray }]}>Resend OTP in {timer}s</Text>
             ) : (
               <TouchableOpacity>
-                <Text style={styles.resendText}>Resend OTP</Text>
+                <Text style={[styles.resendText, { color: activeColors.primary }]}>Resend OTP</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -127,13 +140,14 @@ export default function OTP() {
           <TouchableOpacity 
             style={[
               styles.button, 
+              { backgroundColor: activeColors.primary },
               !otp.every(digit => digit !== '') && styles.buttonDisabled
             ]} 
             onPress={handleVerify}
             disabled={!otp.every(digit => digit !== '')}
           >
             <Text style={styles.buttonText}>Verify & Continue</Text>
-            <CheckCircle2 color={COLORS.textLight} size={20} />
+            <CheckCircle2 color={activeColors.textLight} size={20} />
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -144,19 +158,16 @@ export default function OTP() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
     width: '100%',
   },
   scrollContent: {
     flexGrow: 1,
-    paddingTop: SPACING.lg,
     width: '100%',
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: COLORS.cardBackground,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: SPACING.xxl,
@@ -167,32 +178,26 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: FONTS.poppins.bold,
-    color: COLORS.textDark,
   },
   subtitle: {
     fontFamily: FONTS.inter.regular,
     fontSize: 16,
-    color: COLORS.textGray,
     marginTop: SPACING.xs,
   },
   dummyContainer: {
-    backgroundColor: COLORS.primary + '10',
     padding: SPACING.md,
     borderRadius: BORDER_RADIUS.md,
     marginTop: SPACING.lg,
     borderWidth: 1,
-    borderColor: COLORS.primary + '20',
     alignItems: 'center',
   },
   dummyText: {
     fontFamily: FONTS.inter.medium,
     fontSize: 14,
-    color: COLORS.textDark,
   },
   dummyCode: {
     fontFamily: FONTS.poppins.bold,
     fontSize: 16,
-    color: COLORS.primary,
   },
   otpContainer: {
     flexDirection: 'row',
@@ -200,13 +205,10 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
   },
   otpInput: {
-    backgroundColor: COLORS.cardBackground,
     borderRadius: BORDER_RADIUS.md,
     borderWidth: 1,
-    borderColor: COLORS.border,
     textAlign: 'center',
     fontFamily: FONTS.inter.bold,
-    color: COLORS.primary,
     ...SHADOWS.light,
     ...Platform.select({
       web: {
@@ -221,15 +223,12 @@ const styles = StyleSheet.create({
   timerText: {
     fontFamily: FONTS.inter.medium,
     fontSize: 14,
-    color: COLORS.textGray,
   },
   resendText: {
     fontFamily: FONTS.inter.semiBold,
     fontSize: 14,
-    color: COLORS.primary,
   },
   button: {
-    backgroundColor: COLORS.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -238,13 +237,12 @@ const styles = StyleSheet.create({
     ...SHADOWS.medium,
   },
   buttonDisabled: {
-    backgroundColor: COLORS.textGray + '50',
+    opacity: 0.5,
     shadowOpacity: 0,
     elevation: 0,
   },
   buttonText: {
     fontFamily: FONTS.poppins.bold,
-    color: COLORS.textLight,
     fontSize: 18,
     marginRight: SPACING.sm,
   },

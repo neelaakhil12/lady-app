@@ -6,8 +6,10 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  Platform
+  Platform,
+  Alert 
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { 
   User, 
@@ -22,96 +24,139 @@ import {
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../src/store/useAuthStore';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, IS_SMALL_SCREEN } from '../../src/constants/theme';
+import { COLORS, DARK_COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, IS_SMALL_SCREEN } from '../../src/constants/theme';
 
-const ProfileOption = ({ icon: Icon, title, subtitle, onPress, color = COLORS.textDark }: any) => (
-  <TouchableOpacity style={styles.optionItem} onPress={onPress}>
-    <View style={[styles.optionIcon, { backgroundColor: color + '10' }]}>
-      <Icon size={22} color={color} />
+const ProfileOption = ({ icon: Icon, title, subtitle, onPress, color, activeColors, isDarkMode }: any) => (
+  <TouchableOpacity style={[styles.optionItem, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]} onPress={onPress}>
+    <View style={[styles.optionIcon, { backgroundColor: (color || (isDarkMode ? '#FFFFFF15' : activeColors.primary + '15')) }]}>
+      <Icon size={22} color={color || (isDarkMode ? '#F8FAFC' : activeColors.primary)} />
     </View>
     <View style={styles.optionInfo}>
-      <Text style={[styles.optionTitle, { color }]}>{title}</Text>
-      {subtitle && <Text style={styles.optionSubtitle}>{subtitle}</Text>}
+      <Text style={[styles.optionTitle, { color: activeColors.textDark }]}>{title}</Text>
+      {subtitle && <Text style={[styles.optionSubtitle, { color: activeColors.textGray }]}>{subtitle}</Text>}
     </View>
-    <ChevronRight size={20} color={COLORS.textGray} />
+    <ChevronRight size={20} color={activeColors.textGray} />
   </TouchableOpacity>
 );
 
 export default function Profile() {
   const router = useRouter();
-  const { logout, user } = useAuthStore();
+  const { logout, user, isDarkMode, avatar, setAvatar } = useAuthStore();
+  const activeColors = isDarkMode ? DARK_COLORS : COLORS;
 
   const handleLogout = () => {
     logout();
     router.replace('/landing');
   };
 
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert('Permission Needed', 'We need gallery permissions to update your profile picture.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]?.uri) {
+      setAvatar(result.assets[0].uri);
+    }
+  };
+
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: activeColors.background }]} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Text style={styles.title}>Profile</Text>
+          <Text style={[styles.title, { color: activeColors.textDark }]}>Profile</Text>
           <TouchableOpacity style={styles.settingsBtn}>
-            <Settings size={24} color={COLORS.textDark} />
+            <Settings size={24} color={activeColors.textDark} />
           </TouchableOpacity>
         </View>
 
         {/* Profile Info */}
-        <View style={styles.profileCard}>
+        <View style={[styles.profileCard, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border, borderWidth: 1 }]}>
           <View style={styles.avatarContainer}>
-            <View style={styles.avatar}>
-              <User size={50} color={COLORS.primary} />
+            <View style={[styles.avatar, { backgroundColor: activeColors.primary + '15', borderColor: activeColors.primary }]}>
+              {avatar ? (
+                <Image source={{ uri: avatar }} style={styles.avatarImage} />
+              ) : (
+                <User size={50} color={activeColors.primary} />
+              )}
             </View>
-            <TouchableOpacity style={styles.cameraBtn}>
-              <Camera size={16} color={COLORS.textLight} />
+            <TouchableOpacity 
+              style={[styles.cameraBtn, { backgroundColor: activeColors.primary, borderColor: activeColors.cardBackground }]}
+              onPress={pickImage}
+            >
+              <Camera size={16} color={activeColors.textLight} />
             </TouchableOpacity>
           </View>
-          <Text style={styles.userName}>{user?.name || 'Lady Pilot Captain'}</Text>
-          <Text style={styles.userPhone}>{user?.phoneNumber || '+91 00000 00000'}</Text>
+          <Text style={[styles.userName, { color: activeColors.textDark }]}>{user?.name || 'Lady Pilot Captain'}</Text>
+          <Text style={[styles.userPhone, { color: activeColors.textGray }]}>{user?.phoneNumber || '+91 00000 00000'}</Text>
           
           <View style={styles.badgeContainer}>
-            <View style={styles.badge}>
+            <View style={[styles.badge, { backgroundColor: '#FFD70015' }]}>
               <Star size={14} color="#FFD700" fill="#FFD700" />
-              <Text style={styles.badgeText}>4.9 Rating</Text>
+              <Text style={[styles.badgeText, { color: '#B8860B' }]}>4.9 Rating</Text>
             </View>
-            <View style={[styles.badge, { backgroundColor: COLORS.accent + '15' }]}>
-              <Award size={14} color={COLORS.accent} />
-              <Text style={[styles.badgeText, { color: COLORS.accent }]}>Gold Captain</Text>
+            <View style={[styles.badge, { backgroundColor: activeColors.primary + '15' }]}>
+              <Award size={14} color={activeColors.primary} />
+              <Text style={[styles.badgeText, { color: activeColors.primary }]}>Gold Captain</Text>
             </View>
           </View>
         </View>
 
         {/* Profile Options */}
         <View style={styles.optionsContainer}>
-          <Text style={styles.sectionTitle}>Account Settings</Text>
+          <Text style={[styles.sectionTitle, { color: activeColors.textDark }]}>Account Settings</Text>
           <ProfileOption 
             icon={User} 
             title="Personal Information" 
             subtitle="Name, Phone, Email, Address"
+            onPress={() => router.push('/personal-info')}
+            activeColors={activeColors}
+            isDarkMode={isDarkMode}
           />
           <ProfileOption 
             icon={Shield} 
             title="Documents & Verification" 
             subtitle="License, Aadhar, Vehicle RC"
+            onPress={() => router.push('/documents')}
+            activeColors={activeColors}
+            isDarkMode={isDarkMode}
           />
           <ProfileOption 
             icon={Award} 
             title="Performance & Rewards" 
             subtitle="Your achievements and bonuses"
+            onPress={() => router.push('/performance')}
+            activeColors={activeColors}
+            isDarkMode={isDarkMode}
           />
 
-          <Text style={[styles.sectionTitle, { marginTop: SPACING.xl }]}>Support & Legal</Text>
+          <Text style={[styles.sectionTitle, { color: activeColors.textDark, marginTop: SPACING.xl }]}>Support & Legal</Text>
           <ProfileOption 
             icon={HelpCircle} 
             title="Help & Support" 
             subtitle="FAQs, Contact us, Emergency"
+            onPress={() => router.push('/support')}
+            activeColors={activeColors}
+            isDarkMode={isDarkMode}
           />
           <ProfileOption 
             icon={Shield} 
             title="Privacy Policy" 
+            onPress={() => router.push('/privacy')}
+            activeColors={activeColors}
+            isDarkMode={isDarkMode}
           />
           
-          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+          <TouchableOpacity style={[styles.logoutBtn, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border, borderWidth: 1 }]} onPress={handleLogout}>
             <View style={[styles.optionIcon, { backgroundColor: COLORS.error + '10' }]}>
               <LogOut size={22} color={COLORS.error} />
             </View>
@@ -119,7 +164,7 @@ export default function Profile() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.versionText}>Version 1.0.0</Text>
+        <Text style={[styles.versionText, { color: activeColors.textGray }]}>Version 1.0.0</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -174,6 +219,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 3,
     borderColor: COLORS.primary,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
   },
   cameraBtn: {
     position: 'absolute',

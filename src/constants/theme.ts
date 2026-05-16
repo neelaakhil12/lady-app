@@ -1,21 +1,39 @@
 import { Dimensions, Platform } from 'react-native';
 
 export const COLORS = {
-  primary: '#001F3F', // Navy Blue
-  secondary: '#003366', // Deep Blue
-  accent: '#0074D9', // Bright Blue
-  background: '#F0F4F8', // Soft blue-gray background
+  primary: '#001F3F', // Premium Navy Blue
+  secondary: '#002B5B', // Deep Navy
+  accent: '#004080', // Mid Navy
+  background: '#F8FAFC',
   backgroundEnd: '#FFFFFF',
   cardBackground: '#FFFFFF',
-  textDark: '#1E1E1E',
+  textDark: '#0F172A',
   textLight: '#FFFFFF',
-  textGray: '#757575',
-  success: '#2ECC40',
-  error: '#FF4136',
-  warning: '#FFDC00',
-  info: '#0074D9',
-  border: '#D1DCE5',
-  overlay: 'rgba(0, 0, 0, 0.5)',
+  textGray: '#64748B',
+  success: '#10B981',
+  error: '#EF4444',
+  warning: '#F59E0B',
+  info: '#3B82F6',
+  border: '#E2E8F0',
+  overlay: 'rgba(15, 23, 42, 0.5)',
+};
+
+export const DARK_COLORS = {
+  primary: '#005BB7', // Luminous Navy Blue for better Dark Mode visibility
+  secondary: '#004080', 
+  accent: '#007AFF',
+  background: '#000000',
+  backgroundEnd: '#000000',
+  cardBackground: '#121212',
+  textDark: '#F8FAFC',
+  textLight: '#F8FAFC',
+  textGray: '#94A3B8',
+  success: '#10B981',
+  error: '#EF4444',
+  warning: '#F59E0B',
+  info: '#3B82F6',
+  border: '#262626',
+  overlay: 'rgba(0, 0, 0, 0.8)',
 };
 
 export const SPACING = {

@@ -21,12 +21,16 @@ import {
   Eye, 
   EyeOff
 } from 'lucide-react-native';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLORS, DARK_COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
 
 export default function Signup() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
   const width = Platform.OS === 'web' ? Math.min(windowWidth, 450) : windowWidth;
+  const { isDarkMode } = useAuthStore();
+  const activeColors = isDarkMode ? DARK_COLORS : COLORS;
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -55,17 +59,24 @@ export default function Signup() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: activeColors.background }]}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
         enabled={Platform.OS !== 'web'}
       >
-        <View style={[styles.headerNav, { paddingHorizontal: responsivePadding }]}>
+        <View style={[
+          styles.headerNav, 
+          { 
+            paddingHorizontal: responsivePadding,
+            paddingTop: Platform.OS === 'web' ? SPACING.md : insets.top + SPACING.sm,
+            backgroundColor: activeColors.background
+          }
+        ]}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <ArrowLeft color={COLORS.textDark} size={24} />
+            <ArrowLeft color={activeColors.textDark} size={24} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Create Account</Text>
+          <Text style={[styles.headerTitle, { color: activeColors.textDark }]}>Create Account</Text>
         </View>
 
         <ScrollView 
@@ -78,107 +89,94 @@ export default function Signup() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.titleContainer}>
-            <Text style={[styles.title, { fontSize: isSmall ? 28 : 32 }]}>User Sign Up</Text>
-            <User size={24} color={COLORS.primary} style={styles.titleIcon} />
+            <Text style={[styles.title, { fontSize: isSmall ? 28 : 32, color: activeColors.textDark }]}>User Sign Up</Text>
+            <User size={24} color={activeColors.primary} style={styles.titleIcon} />
           </View>
 
           <View style={styles.form}>
             <View style={styles.row}>
-              <View style={[styles.inputWrapper, { flex: 1, marginRight: SPACING.xs, paddingHorizontal: SPACING.md }]}>
+              <View style={[styles.inputWrapper, { flex: 1, backgroundColor: activeColors.cardBackground, borderColor: activeColors.border, paddingHorizontal: SPACING.md }]}>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { color: activeColors.textDark }]}
                   placeholder="First name"
                   value={formData.firstName}
                   onChangeText={(text) => setFormData({ ...formData, firstName: text })}
-                  placeholderTextColor={COLORS.textGray}
+                  placeholderTextColor={activeColors.textGray}
                 />
               </View>
-              <View style={[styles.inputWrapper, { flex: 1, marginLeft: SPACING.xs, paddingHorizontal: SPACING.md }]}>
+              <View style={[styles.inputWrapper, { flex: 1, marginLeft: SPACING.xs, backgroundColor: activeColors.cardBackground, borderColor: activeColors.border, paddingHorizontal: SPACING.md }]}>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { color: activeColors.textDark }]}
                   placeholder="Last name"
                   value={formData.lastName}
                   onChangeText={(text) => setFormData({ ...formData, lastName: text })}
-                  placeholderTextColor={COLORS.textGray}
+                  placeholderTextColor={activeColors.textGray}
                 />
               </View>
             </View>
 
-            <View style={styles.inputWrapper}>
-              <Phone size={20} color={COLORS.textGray} style={styles.inputIcon} />
+            <View style={[styles.inputWrapper, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
+              <Phone size={20} color={activeColors.textGray} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: activeColors.textDark }]}
                 placeholder="Phone Number"
                 keyboardType="phone-pad"
                 value={formData.phoneNumber}
                 onChangeText={(text) => setFormData({ ...formData, phoneNumber: text })}
-                placeholderTextColor={COLORS.textGray}
+                placeholderTextColor={activeColors.textGray}
               />
             </View>
 
-            <View style={styles.inputWrapper}>
-              <Mail size={20} color={COLORS.textGray} style={styles.inputIcon} />
+            <View style={[styles.inputWrapper, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
+              <Mail size={20} color={activeColors.textGray} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: activeColors.textDark }]}
                 placeholder="Email"
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={formData.email}
                 onChangeText={(text) => setFormData({ ...formData, email: text })}
-                placeholderTextColor={COLORS.textGray}
+                placeholderTextColor={activeColors.textGray}
               />
             </View>
 
-            <View style={styles.inputWrapper}>
-              <Lock size={20} color={COLORS.textGray} style={styles.inputIcon} />
+            <View style={[styles.inputWrapper, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
+              <Lock size={20} color={activeColors.textGray} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: activeColors.textDark }]}
                 placeholder="Password"
                 secureTextEntry={!showPassword}
                 value={formData.password}
                 onChangeText={(text) => setFormData({ ...formData, password: text })}
-                placeholderTextColor={COLORS.textGray}
+                placeholderTextColor={activeColors.textGray}
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 {showPassword ? (
-                  <EyeOff size={20} color={COLORS.textGray} />
+                  <EyeOff size={20} color={activeColors.textGray} />
                 ) : (
-                  <Eye size={20} color={COLORS.textGray} />
+                  <Eye size={20} color={activeColors.textGray} />
                 )}
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity 
-              style={styles.signupButton}
+              style={[styles.signupButton, { backgroundColor: activeColors.primary }]}
               onPress={handleSignup}
             >
               <Text style={styles.signupButtonText}>Sign Up</Text>
             </TouchableOpacity>
 
             <View style={styles.loginLinkContainer}>
-              <Text style={styles.loginLinkText}>Already have an account? </Text>
+              <Text style={[styles.loginLinkText, { color: activeColors.textGray }]}>Already have an account? </Text>
               <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-                <Text style={styles.loginLinkAction}>Login</Text>
+                <Text style={[styles.loginLinkAction, { color: activeColors.primary }]}>Login</Text>
               </TouchableOpacity>
             </View>
 
-            <View style={styles.dividerContainer}>
-              <View style={styles.divider} />
-              <Text style={styles.dividerText}>OR</Text>
-              <View style={styles.divider} />
-            </View>
-
-            <TouchableOpacity 
-              style={styles.captainButton}
-              onPress={() => {}}
-            >
-              <Text style={styles.captainButtonText}>Sign Up as Customer</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.termsText}>
+            <Text style={[styles.termsText, { color: activeColors.textGray }]}>
               This site is protected by reCAPTCHA and the Google{' '}
-              <Text style={styles.linkText}>Privacy Policy</Text> and{' '}
-              <Text style={styles.linkText}>Terms of Service</Text> apply.
+              <Text style={[styles.linkText, { color: activeColors.primary }]}>Privacy Policy</Text> and{' '}
+              <Text style={[styles.linkText, { color: activeColors.primary }]}>Terms of Service</Text> apply.
             </Text>
           </View>
         </ScrollView>
@@ -196,7 +194,6 @@ const styles = StyleSheet.create({
   headerNav: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: SPACING.md,
     paddingBottom: SPACING.md,
     width: '100%',
   },
@@ -204,10 +201,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: COLORS.cardBackground,
     alignItems: 'center',
     justifyContent: 'center',
-    ...SHADOWS.light,
   },
   headerTitle: {
     fontFamily: FONTS.poppins.semiBold,
@@ -326,7 +321,6 @@ const styles = StyleSheet.create({
   captainButtonText: {
     fontFamily: FONTS.poppins.bold,
     fontSize: 18,
-    color: COLORS.primary,
   },
   termsText: {
     fontFamily: FONTS.inter.regular,
@@ -337,7 +331,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.lg,
   },
   linkText: {
-    color: COLORS.primary,
     fontFamily: FONTS.inter.medium,
   },
 });

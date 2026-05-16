@@ -19,30 +19,31 @@ import {
   User, 
   Car 
 } from 'lucide-react-native';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
+import { COLORS, DARK_COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
 
-const DocItem = ({ title, icon: Icon, status, onPress }: any) => (
-  <TouchableOpacity style={styles.docItem} onPress={onPress}>
-    <View style={[styles.iconContainer, { backgroundColor: status === 'uploaded' ? COLORS.success + '15' : COLORS.primary + '10' }]}>
-      <Icon size={24} color={status === 'uploaded' ? COLORS.success : COLORS.primary} />
+const DocItem = ({ title, icon: Icon, status, onPress, activeColors }: any) => (
+  <TouchableOpacity style={[styles.docItem, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]} onPress={onPress}>
+    <View style={[styles.iconContainer, { backgroundColor: status === 'uploaded' ? COLORS.success + '15' : activeColors.primary + '10' }]}>
+      <Icon size={24} color={status === 'uploaded' ? COLORS.success : activeColors.primary} />
     </View>
     <View style={styles.docInfo}>
-      <Text style={styles.docTitle}>{title}</Text>
-      <Text style={[styles.docStatus, { color: status === 'uploaded' ? COLORS.success : COLORS.textGray }]}>
+      <Text style={[styles.docTitle, { color: activeColors.textDark }]}>{title}</Text>
+      <Text style={[styles.docStatus, { color: status === 'uploaded' ? COLORS.success : activeColors.textGray }]}>
         {status === 'uploaded' ? 'Document Uploaded' : 'Tap to upload'}
       </Text>
     </View>
     {status === 'uploaded' ? (
       <CheckCircle2 size={20} color={COLORS.success} />
     ) : (
-      <Upload size={20} color={COLORS.textGray} />
+      <Upload size={20} color={activeColors.textGray} />
     )}
   </TouchableOpacity>
 );
 
 export default function Register() {
   const router = useRouter();
-  const { setLoggedIn } = useAuthStore();
+  const { setLoggedIn, isDarkMode } = useAuthStore();
+  const activeColors = isDarkMode ? DARK_COLORS : COLORS;
   const { width: windowWidth } = useWindowDimensions();
   const width = Platform.OS === 'web' ? Math.min(windowWidth, 450) : windowWidth;
   const [docs, setDocs] = useState({
@@ -69,21 +70,21 @@ export default function Register() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: activeColors.background }]}>
       <ScrollView 
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingHorizontal: responsivePadding }
+          { paddingHorizontal: responsivePadding, backgroundColor: activeColors.background }
         ]}
         showsVerticalScrollIndicator={false}
       >
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <ArrowLeft color={COLORS.textDark} size={24} />
+          <ArrowLeft color={activeColors.textDark} size={24} />
         </TouchableOpacity>
 
         <View style={styles.header}>
-          <Text style={[styles.title, { fontSize: isSmall ? 24 : 28 }]}>Registration</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.title, { fontSize: isSmall ? 24 : 28, color: activeColors.textDark }]}>Registration</Text>
+          <Text style={[styles.subtitle, { color: activeColors.textGray }]}>
             Upload your documents for verification to start earning
           </Text>
         </View>
@@ -94,30 +95,34 @@ export default function Register() {
             icon={CreditCard} 
             status={docs.aadhar} 
             onPress={() => handleUpload('aadhar')}
+            activeColors={activeColors}
           />
           <DocItem 
             title="Driving License" 
             icon={FileText} 
             status={docs.license} 
             onPress={() => handleUpload('license')}
+            activeColors={activeColors}
           />
           <DocItem 
             title="Vehicle Details" 
             icon={Car} 
             status={docs.vehicle} 
             onPress={() => handleUpload('vehicle')}
+            activeColors={activeColors}
           />
           <DocItem 
             title="Profile Photo" 
             icon={User} 
             status={docs.profile} 
             onPress={() => handleUpload('profile')}
+            activeColors={activeColors}
           />
         </View>
 
-        <View style={styles.infoBox}>
-          <Text style={styles.infoTitle}>Why verification?</Text>
-          <Text style={styles.infoText}>
+        <View style={[styles.infoBox, { backgroundColor: activeColors.accent + '10', borderColor: activeColors.accent + '30' }]}>
+          <Text style={[styles.infoTitle, { color: activeColors.accent }]}>Why verification?</Text>
+          <Text style={[styles.infoText, { color: activeColors.textDark }]}>
             We verify all our captains to ensure the safety and trust of our female-only community. Verification usually takes 24-48 hours.
           </Text>
         </View>
@@ -125,13 +130,14 @@ export default function Register() {
         <TouchableOpacity 
           style={[
             styles.button, 
+            { backgroundColor: activeColors.primary },
             !isAllUploaded && styles.buttonDisabled
           ]} 
           onPress={handleComplete}
           disabled={!isAllUploaded}
         >
           <Text style={styles.buttonText}>Submit for Verification</Text>
-          <CheckCircle2 color={COLORS.textLight} size={20} />
+          <CheckCircle2 color={activeColors.textLight} size={20} />
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -156,11 +162,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: COLORS.cardBackground,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: SPACING.xl,
-    ...SHADOWS.light,
   },
   header: {
     marginBottom: SPACING.xl,

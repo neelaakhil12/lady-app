@@ -5,10 +5,12 @@ import {
   Text, 
   TouchableOpacity, 
   StatusBar,
-  useWindowDimensions
+  useWindowDimensions,
+  Platform,
+  Image
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { User, Car, ChevronRight } from 'lucide-react-native';
+import { Car, ChevronRight } from 'lucide-react-native';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../src/constants/theme';
 
 export default function Landing() {
@@ -22,61 +24,35 @@ export default function Landing() {
     router.push('/onboarding');
   };
 
-  const handleCustomerPress = () => {
-    // For now, we can show an alert or just stay here since we're only building the Captain app
-    alert('Customer App coming soon!');
-  };
+
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar hidden />
       <View style={[
         styles.overlay,
         { 
           paddingHorizontal: isSmall ? SPACING.md : SPACING.xl,
-          paddingVertical: isSmall ? SPACING.xl : SPACING.xxl * 2,
+          paddingVertical: isSmall ? SPACING.xl : SPACING.xxl,
         }
       ]}>
-        <View style={[
-          styles.header,
-          { marginTop: isSmall ? SPACING.xl : SPACING.xxl }
-        ]}>
-          <Text style={[
-            styles.brandName,
-            { fontSize: isSmall ? 36 : 48 }
-          ]}>Lady Pilot</Text>
-          <Text style={styles.tagline}>Your ride, on demand</Text>
+        {/* Center Section */}
+        <View style={[styles.header, { flex: 1, justifyContent: 'center' }]}>
+          <Image 
+            source={require('../assets/logo.png')} 
+            style={[
+              styles.logo,
+              { width: isSmall ? 380 : 500, height: isSmall ? 190 : 250 }
+            ]}
+            resizeMode="contain"
+          />
+          <Text style={[styles.choiceTitle, { marginTop: SPACING.lg, marginBottom: 0 }]}>
+            Become a Captain
+          </Text>
         </View>
 
+        {/* Bottom Section */}
         <View style={styles.content}>
-          <Text style={styles.choiceTitle}>Choose your role</Text>
-          
-          <TouchableOpacity 
-            style={styles.choiceCard} 
-            onPress={handleCustomerPress}
-            activeOpacity={0.8}
-          >
-            <View style={[
-              styles.iconContainer, 
-              { 
-                backgroundColor: COLORS.accent + '20',
-                width: isSmall ? 50 : 60,
-                height: isSmall ? 50 : 60,
-                borderRadius: isSmall ? 25 : 30,
-              }
-            ]}>
-              <User size={32} color={COLORS.accent} />
-            </View>
-            <View style={styles.choiceDetails}>
-              <Text style={[
-                styles.choiceName,
-                { fontSize: isSmall ? 18 : 22 }
-              ]}>Customer</Text>
-              <Text style={styles.choiceDesc}>I want to book a safe ride</Text>
-            </View>
-            <ChevronRight size={24} color={COLORS.textGray} />
-          </TouchableOpacity>
-
           <TouchableOpacity 
             style={[styles.choiceCard, styles.activeCard]} 
             onPress={handleCaptainPress}
@@ -105,10 +81,14 @@ export default function Landing() {
             </View>
             <ChevronRight size={24} color={COLORS.textLight} />
           </TouchableOpacity>
-        </View>
+          
+          <Text style={[styles.tagline, { textAlign: 'center', marginTop: SPACING.md, marginBottom: SPACING.xl }]}>
+            Your ride, on demand
+          </Text>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Made with ❤️ for women's safety</Text>
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Made with ❤️ for women's safety</Text>
+          </View>
         </View>
       </View>
     </View>
@@ -129,23 +109,21 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
   },
-  brandName: {
-    fontFamily: FONTS.poppins.bold,
-    color: COLORS.textLight,
-    letterSpacing: -1,
+  logo: {
+    marginBottom: SPACING.xs,
   },
   tagline: {
     fontFamily: FONTS.inter.medium,
-    fontSize: 18,
+    fontSize: 20,
     color: COLORS.textLight + 'CC',
-    marginTop: -5,
+    marginTop: 0,
   },
   content: {
     width: '100%',
   },
   choiceTitle: {
     fontFamily: FONTS.poppins.semiBold,
-    fontSize: 20,
+    fontSize: 24,
     color: COLORS.textLight,
     marginBottom: SPACING.lg,
     textAlign: 'center',

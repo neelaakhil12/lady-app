@@ -13,8 +13,10 @@ import {
   FlatList
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Phone, ChevronRight, ChevronDown, Search, X } from 'lucide-react-native';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
+import { ChevronRight, ChevronDown, Search, X } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLORS, DARK_COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
+import { useAuthStore } from '../../src/store/useAuthStore';
 
 const COUNTRY_CODES = [
   { code: '+91', country: 'India', flag: '🇮🇳' },
@@ -30,8 +32,12 @@ const COUNTRY_CODES = [
 ];
 
 export default function Login() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const { isDarkMode } = useAuthStore();
+  const activeColors = isDarkMode ? DARK_COLORS : COLORS;
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedCountry, setSelectedCountry] = useState(COUNTRY_CODES[0]);
   const [isPickerVisible, setIsPickerVisible] = useState(false);
@@ -57,7 +63,7 @@ export default function Login() {
 
   const renderCountryItem = ({ item }: { item: typeof COUNTRY_CODES[0] }) => (
     <TouchableOpacity 
-      style={styles.countryItem}
+      style={[styles.countryItem, { borderBottomColor: activeColors.border }]} 
       onPress={() => {
         setSelectedCountry(item);
         setIsPickerVisible(false);
@@ -65,13 +71,13 @@ export default function Login() {
       }}
     >
       <Text style={styles.countryFlag}>{item.flag}</Text>
-      <Text style={styles.countryName}>{item.country}</Text>
-      <Text style={styles.countryCodeValue}>{item.code}</Text>
+      <Text style={[styles.countryName, { color: activeColors.textDark }]}>{item.country}</Text>
+      <Text style={[styles.countryCodeValue, { color: activeColors.textGray }]}>{item.code}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: activeColors.background }]}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1, width: '100%' }}
@@ -81,60 +87,60 @@ export default function Login() {
           style={{ flex: 1, width: '100%' }}
           contentContainerStyle={[
             styles.scrollContent,
-            { paddingHorizontal: responsiveSpacing }
+            { 
+              paddingHorizontal: responsiveSpacing,
+              paddingTop: Platform.OS === 'web' ? SPACING.xl : insets.top + SPACING.xl
+            }
           ]} 
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           <View style={[
-            styles.header,
+            styles.header, 
             { 
               marginBottom: isSmall ? SPACING.xl : SPACING.xxl * 1.5,
               width: '100%'
             }
           ]}>
-            <Text style={styles.welcomeText}>Welcome to</Text>
+            <Text style={[styles.welcomeText, { color: activeColors.textGray }]}>Welcome to</Text>
             <Text style={[
               styles.brandText,
-              { fontSize: brandFontSize }
+              { fontSize: brandFontSize, color: activeColors.primary }
             ]}>Lady Pilot</Text>
-            <Text style={styles.subtitle}>Captain Application</Text>
+            <Text style={[styles.subtitle, { color: activeColors.accent }]}>Captain Application</Text>
           </View>
 
           <View style={[styles.formContainer, { width: '100%' }]}>
-            <Text style={styles.label}>Enter Mobile Number</Text>
-            <View style={[styles.inputContainer, { height: isVerySmall ? 54 : 60 }]}>
+            <Text style={[styles.label, { color: activeColors.textDark }]}>Enter Mobile Number</Text>
+            <View style={[styles.inputContainer, { height: isVerySmall ? 54 : 60, backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
               <TouchableOpacity 
-                style={[styles.countryCodeSelector, { width: countryCodeWidth }]}
+                style={[styles.countryCodeSelector, { width: countryCodeWidth, borderRightColor: activeColors.border }]}
                 onPress={() => setIsPickerVisible(true)}
               >
-                <Text style={[styles.countryCodeText, { fontSize: isVerySmall ? 14 : 16 }]}>{selectedCountry.code}</Text>
-                <ChevronDown size={14} color={COLORS.textDark} style={{ marginLeft: 2 }} />
+                <Text style={[styles.countryCodeText, { fontSize: isVerySmall ? 14 : 16, color: activeColors.textDark }]}>{selectedCountry.code}</Text>
+                <ChevronDown size={14} color={activeColors.textDark} style={{ marginLeft: 2 }} />
               </TouchableOpacity>
               
               <TextInput
-                style={[styles.input, { fontSize: inputFontSize }]}
+                style={[styles.input, { fontSize: inputFontSize, color: activeColors.textDark }]}
                 placeholder="00000 00000"
                 keyboardType="phone-pad"
                 maxLength={10}
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
+                placeholderTextColor={activeColors.textGray}
                 autoFocus
               />
-              {!isVerySmall && (
-                <View style={styles.iconWrapper}>
-                  <Phone size={18} color={COLORS.textGray} />
-                </View>
-              )}
             </View>
 
-            <Text style={styles.infoText}>
+            <Text style={[styles.infoText, { color: activeColors.textGray }]}>
               We will send an OTP to verify your number.
             </Text>
 
             <TouchableOpacity 
               style={[
                 styles.button, 
+                { backgroundColor: activeColors.primary },
                 phoneNumber.length !== 10 && styles.buttonDisabled,
                 { width: '100%' }
               ]} 
@@ -142,15 +148,15 @@ export default function Login() {
               disabled={phoneNumber.length !== 10}
             >
               <Text style={styles.buttonText}>Send OTP</Text>
-              <ChevronRight color={COLORS.textLight} size={20} />
+              <ChevronRight color={activeColors.textLight} size={20} />
             </TouchableOpacity>
           </View>
 
           <View style={[styles.footer, { width: '100%' }]}>
-            <Text style={styles.footerText}>
+            <Text style={[styles.footerText, { color: activeColors.textGray }]}>
               By continuing, you agree to our{' '}
-              <Text style={styles.linkText}>Terms of Service</Text> and{' '}
-              <Text style={styles.linkText}>Privacy Policy</Text>
+              <Text style={[styles.linkText, { color: activeColors.primary }]}>Terms of Service</Text> and{' '}
+              <Text style={[styles.linkText, { color: activeColors.primary }]}>Privacy Policy</Text>
             </Text>
           </View>
         </ScrollView>
@@ -163,22 +169,23 @@ export default function Login() {
         transparent={true}
         onRequestClose={() => setIsPickerVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { height: windowHeight * 0.7 }]}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Country</Text>
+        <View style={[styles.modalOverlay, { backgroundColor: activeColors.overlay }]}>
+          <View style={[styles.modalContent, { height: windowHeight * 0.7, backgroundColor: activeColors.cardBackground }]}>
+            <View style={[styles.modalHeader, { borderBottomColor: activeColors.border }]}>
+              <Text style={[styles.modalTitle, { color: activeColors.textDark }]}>Select Country</Text>
               <TouchableOpacity onPress={() => setIsPickerVisible(false)}>
-                <X size={24} color={COLORS.textDark} />
+                <X size={24} color={activeColors.textDark} />
               </TouchableOpacity>
             </View>
 
-            <View style={styles.searchContainer}>
-              <Search size={20} color={COLORS.textGray} />
+            <View style={[styles.searchContainer, { backgroundColor: activeColors.background, borderColor: activeColors.border }]}>
+              <Search size={20} color={activeColors.textGray} />
               <TextInput
-                style={styles.searchInput}
+                style={[styles.searchInput, { color: activeColors.textDark }]}
                 placeholder="Search country or code"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
+                placeholderTextColor={activeColors.textGray}
                 autoFocus={Platform.OS === 'web'}
               />
             </View>
@@ -207,7 +214,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingTop: Platform.OS === 'web' ? SPACING.xl : SPACING.xxl * 2,
     paddingBottom: SPACING.xl,
     width: '100%',
     maxWidth: '100%',
@@ -260,10 +266,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRightWidth: 1,
-    borderRightColor: COLORS.border,
     height: '100%',
     justifyContent: 'center',
-    backgroundColor: '#F8F9FA',
   },
   countryCodeText: {
     fontFamily: FONTS.inter.semiBold,
@@ -281,14 +285,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  iconWrapper: {
-    paddingRight: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  inputIcon: {
-    // No longer used directly
-  },
+
   infoText: {
     fontFamily: FONTS.inter.regular,
     fontSize: 13,

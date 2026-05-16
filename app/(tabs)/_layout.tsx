@@ -2,21 +2,25 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { Tabs } from 'expo-router';
 import { LayoutDashboard, Wallet, History, User } from 'lucide-react-native';
-import { COLORS, FONTS, SHADOWS } from '../../src/constants/theme';
+import { useAuthStore } from '../../src/store/useAuthStore';
+import { COLORS, DARK_COLORS, FONTS, SHADOWS } from '../../src/constants/theme';
 
 export default function TabLayout() {
+  const { isDarkMode } = useAuthStore();
+  const activeColors = isDarkMode ? DARK_COLORS : COLORS;
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.textGray,
+        tabBarActiveTintColor: activeColors.primary,
+        tabBarInactiveTintColor: activeColors.textGray,
         tabBarStyle: {
           borderTopWidth: 1,
-          borderTopColor: COLORS.border,
+          borderTopColor: activeColors.border,
           height: Platform.OS === 'web' ? 90 : 65,
           paddingBottom: Platform.OS === 'web' ? 35 : 10,
           paddingTop: 10,
-          backgroundColor: COLORS.cardBackground,
+          backgroundColor: activeColors.cardBackground,
           ...SHADOWS.medium,
           position: 'absolute',
           bottom: 0,

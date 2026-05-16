@@ -9,18 +9,74 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MapPin, Home } from 'lucide-react-native';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
+import * as Location from 'expo-location';
+import { useLocationStore } from '../../src/store/useLocationStore';
+import { COLORS, DARK_COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
+import { useAuthStore } from '../../src/store/useAuthStore';
+import { Alert, ActivityIndicator } from 'react-native';
 
 export default function LocationAccess() {
   const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
   const width = Platform.OS === 'web' ? Math.min(windowWidth, 450) : windowWidth;
-
   const isSmall = width < 400;
   const responsivePadding = isSmall ? SPACING.md : SPACING.xl;
+  const { isDarkMode } = useAuthStore();
+  const activeColors = isDarkMode ? DARK_COLORS : COLORS;
+  
+  const { setLocation, setTracking } = useLocationStore();
+  const [loading, setLoading] = React.useState(false);
 
-  const handleAllow = () => {
-    router.push('/(auth)/register');
+  const handleAllow = async () => {
+    try {
+      setLoading(true);
+      
+      // Request permissions
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permission Denied',
+          'Location access is required to find rides. Please enable it in your settings.',
+          [{ text: 'OK' }]
+        );
+        setLoading(false);
+        return;
+      }
+
+      // Get initial location
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+
+      setLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+
+      // Start watching location
+      setTracking(true);
+      await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.Balanced,
+          distanceInterval: 10, // Update every 10 meters
+        },
+        (newLocation) => {
+          setLocation({
+            latitude: newLocation.coords.latitude,
+            longitude: newLocation.coords.longitude,
+          });
+          console.log('Location updated:', newLocation.coords);
+        }
+      );
+
+      router.push('/(auth)/register');
+    } catch (error) {
+      console.error('Location error:', error);
+      Alert.alert('Error', 'Could not get your location. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLater = () => {
@@ -28,34 +84,34 @@ export default function LocationAccess() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: activeColors.background }]}>
       <View style={[styles.content, { paddingHorizontal: responsivePadding }]}>
         {/* Graphic Area */}
         <View style={styles.graphicContainer}>
-          <View style={styles.circleBg}>
+          <View style={[styles.circleBg, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
             {/* Grid lines */}
-            <View style={styles.gridLineH} />
-            <View style={styles.gridLineV} />
+            <View style={[styles.gridLineH, { backgroundColor: activeColors.border }]} />
+            <View style={[styles.gridLineV, { backgroundColor: activeColors.border }]} />
             
             {/* Small house icons */}
             <View style={[styles.houseIcon, { top: '25%', left: '20%' }]}>
-              <Home size={16} color={COLORS.textGray + '50'} />
+              <Home size={16} color={activeColors.textGray + '50'} />
             </View>
             <View style={[styles.houseIcon, { bottom: '25%', right: '20%' }]}>
-              <Home size={16} color={COLORS.textGray + '50'} />
+              <Home size={16} color={activeColors.textGray + '50'} />
             </View>
 
             {/* Main Location Pin */}
             <View style={styles.pinContainer}>
-              <MapPin size={40} color={COLORS.primary} fill={COLORS.primary + '20'} />
+              <MapPin size={40} color={activeColors.primary} fill={activeColors.primary + '20'} />
             </View>
           </View>
         </View>
 
         {/* Text Area */}
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Allow Location Access</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.title, { color: activeColors.textDark }]}>Allow Location Access</Text>
+          <Text style={[styles.subtitle, { color: activeColors.textGray }]}>
             We need your location to find rides near you and show accurate pickup points
           </Text>
         </View>
@@ -63,17 +119,22 @@ export default function LocationAccess() {
         {/* Buttons Area */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity 
-            style={styles.primaryButton}
+            style={[styles.primaryButton, { backgroundColor: activeColors.primary }, loading && styles.buttonDisabled]}
             onPress={handleAllow}
+            disabled={loading}
           >
-            <Text style={styles.primaryButtonText}>Allow Location</Text>
+            {loading ? (
+              <ActivityIndicator color={activeColors.textLight} />
+            ) : (
+              <Text style={styles.primaryButtonText}>Allow Location</Text>
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity 
             style={styles.secondaryButton}
             onPress={handleLater}
           >
-            <Text style={styles.secondaryButtonText}>Maybe Later</Text>
+            <Text style={[styles.secondaryButtonText, { color: activeColors.primary }]}>Maybe Later</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -170,6 +231,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     ...SHADOWS.medium,
+  },
+  buttonDisabled: {
+    opacity: 0.7,
   },
   primaryButtonText: {
     fontFamily: FONTS.poppins.bold,

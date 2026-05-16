@@ -18,13 +18,16 @@ import Animated, {
   interpolate
 } from 'react-native-reanimated';
 import { MapPin, Star, X, Check } from 'lucide-react-native';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, SCREEN_WIDTH, SCREEN_HEIGHT, IS_SMALL_SCREEN } from '../../src/constants/theme';
+import { COLORS, DARK_COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, SCREEN_WIDTH, SCREEN_HEIGHT, IS_SMALL_SCREEN } from '../../src/constants/theme';
+import { useAuthStore } from '../../src/store/useAuthStore';
 
 const width = SCREEN_WIDTH;
 const height = SCREEN_HEIGHT;
 
 export default function IncomingRide() {
   const router = useRouter();
+  const { isDarkMode } = useAuthStore();
+  const activeColors = isDarkMode ? DARK_COLORS : COLORS;
   const pulse = useSharedValue(1);
 
   useEffect(() => {
@@ -54,18 +57,18 @@ export default function IncomingRide() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: activeColors.background }]}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>New Ride Request</Text>
-        <TouchableOpacity style={styles.closeBtn} onPress={handleReject}>
-          <X size={24} color={COLORS.textDark} />
+        <Text style={[styles.headerTitle, { color: activeColors.textDark }]}>New Ride Request</Text>
+        <TouchableOpacity style={[styles.closeBtn, { backgroundColor: activeColors.cardBackground }]} onPress={handleReject}>
+          <X size={24} color={activeColors.textDark} />
         </TouchableOpacity>
       </View>
 
       <View style={styles.content}>
         <View style={styles.avatarContainer}>
-          <Animated.View style={[styles.pulseCircle, animatedCircle]} />
-          <View style={styles.avatar}>
+          <Animated.View style={[styles.pulseCircle, animatedCircle, { backgroundColor: activeColors.primary }]} />
+          <View style={[styles.avatar, { borderColor: activeColors.cardBackground }]}>
             <Image 
               source={{ uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60' }} 
               style={styles.avatarImg}
@@ -73,53 +76,53 @@ export default function IncomingRide() {
           </View>
         </View>
 
-        <Text style={styles.userName}>Anjali Sharma</Text>
+        <Text style={[styles.userName, { color: activeColors.textDark }]}>Anjali Sharma</Text>
         <View style={styles.ratingContainer}>
-          <Star size={16} color="#FFD700" fill="#FFD700" />
-          <Text style={styles.ratingText}>4.8 (120+ rides)</Text>
+          <Star size={16} color="#F59E0B" fill="#F59E0B" />
+          <Text style={[styles.ratingText, { color: activeColors.textGray }]}>4.8 (120+ rides)</Text>
         </View>
 
-        <View style={styles.fareCard}>
-          <Text style={styles.fareLabel}>Estimated Fare</Text>
-          <Text style={styles.fareValue}>₹145.50</Text>
+        <View style={[styles.fareCard, { backgroundColor: activeColors.primary + '15', borderColor: activeColors.primary + '30' }]}>
+          <Text style={[styles.fareLabel, { color: activeColors.primary }]}>Estimated Fare</Text>
+          <Text style={[styles.fareValue, { color: activeColors.primary }]}>₹145.50</Text>
         </View>
 
-        <View style={styles.locationCard}>
+        <View style={[styles.locationCard, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
           <View style={styles.locationRow}>
             <View style={[styles.dot, { backgroundColor: COLORS.success }]} />
             <View>
-              <Text style={styles.locationLabel}>Pickup</Text>
-              <Text style={styles.locationText}>HSR Layout, Sector 7, Bangalore</Text>
+              <Text style={[styles.locationLabel, { color: activeColors.textGray }]}>Pickup</Text>
+              <Text style={[styles.locationText, { color: activeColors.textDark }]}>HSR Layout, Sector 7, Bangalore</Text>
             </View>
           </View>
-          <View style={styles.line} />
+          <View style={[styles.line, { backgroundColor: activeColors.border }]} />
           <View style={styles.locationRow}>
-            <View style={[styles.dot, { backgroundColor: COLORS.primary }]} />
+            <View style={[styles.dot, { backgroundColor: activeColors.primary }]} />
             <View>
-              <Text style={styles.locationLabel}>Drop</Text>
-              <Text style={styles.locationText}>Indiranagar, 100ft Road, Bangalore</Text>
+              <Text style={[styles.locationLabel, { color: activeColors.textGray }]}>Drop</Text>
+              <Text style={[styles.locationText, { color: activeColors.textDark }]}>Indiranagar, 100ft Road, Bangalore</Text>
             </View>
           </View>
         </View>
 
         <View style={styles.infoGrid}>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>Distance</Text>
-            <Text style={styles.infoValue}>4.5 km</Text>
+          <View style={[styles.infoItem, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
+            <Text style={[styles.infoLabel, { color: activeColors.textGray }]}>Distance</Text>
+            <Text style={[styles.infoValue, { color: activeColors.textDark }]}>4.5 km</Text>
           </View>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>Time</Text>
-            <Text style={styles.infoValue}>12 mins</Text>
+          <View style={[styles.infoItem, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
+            <Text style={[styles.infoLabel, { color: activeColors.textGray }]}>Time</Text>
+            <Text style={[styles.infoValue, { color: activeColors.textDark }]}>12 mins</Text>
           </View>
         </View>
       </View>
 
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.rejectBtn} onPress={handleReject}>
-          <Text style={styles.rejectBtnText}>Reject</Text>
+      <View style={[styles.footer, { backgroundColor: activeColors.cardBackground, borderTopColor: activeColors.border }]}>
+        <TouchableOpacity style={[styles.rejectBtn, { borderColor: activeColors.border }]} onPress={handleReject}>
+          <Text style={[styles.rejectBtnText, { color: activeColors.textGray }]}>Reject</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.acceptBtn} onPress={handleAccept}>
-          <Check size={24} color={COLORS.textLight} />
+        <TouchableOpacity style={[styles.acceptBtn, { backgroundColor: activeColors.primary }]} onPress={handleAccept}>
+          <Check size={24} color={activeColors.textLight} />
           <Text style={styles.acceptBtnText}>Accept Ride</Text>
         </TouchableOpacity>
       </View>
@@ -130,7 +133,6 @@ export default function IncomingRide() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   header: {
     flexDirection: 'row',
@@ -142,13 +144,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontFamily: FONTS.poppins.bold,
     fontSize: 20,
-    color: COLORS.textDark,
   },
   closeBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: COLORS.cardBackground,
     alignItems: 'center',
     justifyContent: 'center',
     ...SHADOWS.light,
@@ -169,14 +169,12 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: COLORS.primary,
   },
   avatar: {
     width: 100,
     height: 100,
     borderRadius: 50,
     borderWidth: 4,
-    borderColor: COLORS.cardBackground,
     overflow: 'hidden',
     ...SHADOWS.medium,
   },
@@ -187,7 +185,6 @@ const styles = StyleSheet.create({
   userName: {
     fontFamily: FONTS.poppins.bold,
     fontSize: IS_SMALL_SCREEN ? 20 : 24,
-    color: COLORS.textDark,
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -197,39 +194,32 @@ const styles = StyleSheet.create({
   ratingText: {
     fontFamily: FONTS.inter.medium,
     fontSize: 14,
-    color: COLORS.textGray,
     marginLeft: 6,
   },
   fareCard: {
-    backgroundColor: COLORS.primary + '10',
     paddingHorizontal: IS_SMALL_SCREEN ? SPACING.lg : SPACING.xl,
     paddingVertical: IS_SMALL_SCREEN ? SPACING.sm : SPACING.md,
     borderRadius: BORDER_RADIUS.md,
     marginTop: IS_SMALL_SCREEN ? SPACING.lg : SPACING.xl,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: COLORS.primary + '20',
   },
   fareLabel: {
     fontFamily: FONTS.inter.medium,
     fontSize: 12,
-    color: COLORS.primary,
     textTransform: 'uppercase',
   },
   fareValue: {
     fontFamily: FONTS.poppins.bold,
     fontSize: 28,
-    color: COLORS.primary,
   },
   locationCard: {
     width: '100%',
-    backgroundColor: COLORS.cardBackground,
     borderRadius: BORDER_RADIUS.lg,
     padding: IS_SMALL_SCREEN ? SPACING.md : SPACING.lg,
     marginTop: IS_SMALL_SCREEN ? SPACING.lg : SPACING.xl,
     ...SHADOWS.light,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   locationRow: {
     flexDirection: 'row',
@@ -245,18 +235,15 @@ const styles = StyleSheet.create({
   locationLabel: {
     fontFamily: FONTS.inter.medium,
     fontSize: 12,
-    color: COLORS.textGray,
   },
   locationText: {
     fontFamily: FONTS.inter.semiBold,
     fontSize: 15,
-    color: COLORS.textDark,
     marginTop: 2,
   },
   line: {
     width: 1,
     height: 25,
-    backgroundColor: COLORS.border,
     marginLeft: 4.5,
     marginVertical: 4,
   },
@@ -267,31 +254,25 @@ const styles = StyleSheet.create({
   },
   infoItem: {
     flex: 1,
-    backgroundColor: COLORS.cardBackground,
     padding: SPACING.md,
     borderRadius: BORDER_RADIUS.md,
     marginHorizontal: 4,
     alignItems: 'center',
     ...SHADOWS.light,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   infoLabel: {
     fontFamily: FONTS.inter.medium,
     fontSize: 12,
-    color: COLORS.textGray,
   },
   infoValue: {
     fontFamily: FONTS.poppins.semiBold,
     fontSize: 16,
-    color: COLORS.textDark,
   },
   footer: {
     flexDirection: 'row',
     padding: IS_SMALL_SCREEN ? SPACING.lg : SPACING.xl,
-    backgroundColor: COLORS.cardBackground,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
   },
   rejectBtn: {
     flex: 1,
@@ -301,17 +282,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: SPACING.md,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   rejectBtnText: {
     fontFamily: FONTS.poppins.semiBold,
     fontSize: 16,
-    color: COLORS.textGray,
   },
   acceptBtn: {
     flex: 2,
     height: 60,
-    backgroundColor: COLORS.primary,
     borderRadius: BORDER_RADIUS.md,
     flexDirection: 'row',
     alignItems: 'center',

@@ -16,12 +16,13 @@ import {
   ChevronRight,
   Star
 } from 'lucide-react-native';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, IS_SMALL_SCREEN } from '../../src/constants/theme';
+import { useAuthStore } from '../../src/store/useAuthStore';
+import { COLORS, DARK_COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, IS_SMALL_SCREEN } from '../../src/constants/theme';
 
-const RideHistoryItem = ({ date, from, to, amount, status, rating }: any) => (
-  <TouchableOpacity style={styles.historyItem}>
+const RideHistoryItem = ({ date, from, to, amount, status, rating, activeColors, isDarkMode }: any) => (
+  <TouchableOpacity style={[styles.historyItem, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
     <View style={styles.historyHeader}>
-      <Text style={styles.historyDate}>{date}</Text>
+      <Text style={[styles.historyDate, { color: activeColors.textGray }]}>{date}</Text>
       <View style={[styles.statusBadge, { backgroundColor: status === 'Completed' ? COLORS.success + '15' : COLORS.error + '15' }]}>
         <Text style={[styles.statusText, { color: status === 'Completed' ? COLORS.success : COLORS.error }]}>
           {status}
@@ -32,48 +33,51 @@ const RideHistoryItem = ({ date, from, to, amount, status, rating }: any) => (
     <View style={styles.locationContainer}>
       <View style={styles.locationRow}>
         <View style={[styles.dot, { backgroundColor: COLORS.success }]} />
-        <Text style={styles.locationText} numberOfLines={1}>{from}</Text>
+        <Text style={[styles.locationText, { color: activeColors.textDark }]} numberOfLines={1}>{from}</Text>
       </View>
-      <View style={styles.line} />
+      <View style={[styles.line, { backgroundColor: activeColors.border }]} />
       <View style={styles.locationRow}>
-        <View style={[styles.dot, { backgroundColor: COLORS.primary }]} />
-        <Text style={styles.locationText} numberOfLines={1}>{to}</Text>
+        <View style={[styles.dot, { backgroundColor: isDarkMode ? '#F8FAFC' : activeColors.primary }]} />
+        <Text style={[styles.locationText, { color: activeColors.textDark }]} numberOfLines={1}>{to}</Text>
       </View>
     </View>
 
-    <View style={styles.historyFooter}>
+    <View style={[styles.historyFooter, { borderTopColor: activeColors.border }]}>
       <View style={styles.ratingContainer}>
-        <Star size={14} color="#FFD700" fill="#FFD700" />
-        <Text style={styles.ratingText}>{rating}</Text>
+        <Star size={14} color="#F59E0B" fill="#F59E0B" />
+        <Text style={[styles.ratingText, { color: activeColors.textDark }]}>{rating}</Text>
       </View>
-      <Text style={styles.amountText}>₹{amount}</Text>
+      <Text style={[styles.amountText, { color: activeColors.textDark }]}>₹{amount}</Text>
     </View>
   </TouchableOpacity>
 );
 
 export default function History() {
+  const { isDarkMode } = useAuthStore();
+  const activeColors = isDarkMode ? DARK_COLORS : COLORS;
+
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: activeColors.background }]} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.title}>Ride History</Text>
+        <Text style={[styles.title, { color: activeColors.textDark }]}>Ride History</Text>
       </View>
 
       <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Search size={20} color={COLORS.textGray} />
+        <View style={[styles.searchBar, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
+          <Search size={20} color={activeColors.textGray} />
           <TextInput 
             placeholder="Search rides..." 
-            style={styles.searchInput}
-            placeholderTextColor={COLORS.textGray}
+            style={[styles.searchInput, { color: activeColors.textDark }]}
+            placeholderTextColor={activeColors.textGray}
           />
         </View>
-        <TouchableOpacity style={styles.filterBtn}>
-          <Filter size={20} color={COLORS.primary} />
+        <TouchableOpacity style={[styles.filterBtn, { backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
+          <Filter size={20} color={activeColors.primary} />
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.sectionTitle}>Recent Rides</Text>
+        <Text style={[styles.sectionTitle, { color: activeColors.textGray }]}>Recent Rides</Text>
         
         <RideHistoryItem 
           date="Today, 2:30 PM"
@@ -82,6 +86,7 @@ export default function History() {
           amount="145"
           status="Completed"
           rating="5.0"
+          activeColors={activeColors}
         />
 
         <RideHistoryItem 
@@ -91,6 +96,7 @@ export default function History() {
           amount="210"
           status="Completed"
           rating="4.8"
+          activeColors={activeColors}
         />
 
         <RideHistoryItem 
@@ -100,6 +106,7 @@ export default function History() {
           amount="320"
           status="Completed"
           rating="5.0"
+          activeColors={activeColors}
         />
 
         <RideHistoryItem 
@@ -109,6 +116,7 @@ export default function History() {
           amount="180"
           status="Cancelled"
           rating="N/A"
+          activeColors={activeColors}
         />
 
         <RideHistoryItem 
@@ -118,6 +126,7 @@ export default function History() {
           amount="120"
           status="Completed"
           rating="4.9"
+          activeColors={activeColors}
         />
       </ScrollView>
     </SafeAreaView>

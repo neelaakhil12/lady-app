@@ -6,9 +6,13 @@ interface AuthState {
   isLoggedIn: boolean;
   isFirstTime: boolean;
   user: any | null;
+  isDarkMode: boolean;
+  avatar: string | null;
   setLoggedIn: (status: boolean) => void;
   setFirstTime: (status: boolean) => void;
   setUser: (user: any) => void;
+  setAvatar: (uri: string) => void;
+  toggleDarkMode: () => void;
   logout: () => void;
 }
 
@@ -18,10 +22,14 @@ export const useAuthStore = create<AuthState>()(
       isLoggedIn: false,
       isFirstTime: true,
       user: null,
+      isDarkMode: false,
+      avatar: null,
       setLoggedIn: (status) => set({ isLoggedIn: status }),
       setFirstTime: (status) => set({ isFirstTime: status }),
       setUser: (user) => set({ user }),
-      logout: () => set({ isLoggedIn: false, isFirstTime: true, user: null }),
+      setAvatar: (uri) => set({ avatar: uri }),
+      toggleDarkMode: () => set((state) => ({ isDarkMode: !state.isDarkMode })),
+      logout: () => set({ isLoggedIn: false, isFirstTime: true, user: null, avatar: null }),
     }),
     {
       name: 'auth-storage',
