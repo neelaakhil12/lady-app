@@ -1,9 +1,10 @@
 import { Dimensions, Platform } from 'react-native';
 
 export const COLORS = {
-  primary: '#001F3F', // Premium Navy Blue
-  secondary: '#002B5B', // Deep Navy
-  accent: '#004080', // Mid Navy
+  primary: '#331A5E', // Deep Purple from laptop view
+  secondary: '#432371', // Vibrant Purple
+  accent: '#7C3AED', // Light Purple
+
   background: '#F8FAFC',
   backgroundEnd: '#FFFFFF',
   cardBackground: '#FFFFFF',
@@ -19,9 +20,10 @@ export const COLORS = {
 };
 
 export const DARK_COLORS = {
-  primary: '#005BB7', // Luminous Navy Blue for better Dark Mode visibility
-  secondary: '#004080', 
-  accent: '#007AFF',
+  primary: '#A78BFA', // Luminous Purple for better Dark Mode visibility
+  secondary: '#7C3AED', 
+  accent: '#C026D3',
+
   background: '#000000',
   backgroundEnd: '#000000',
   cardBackground: '#121212',

@@ -19,16 +19,16 @@ import { COLORS, DARK_COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../
 import { useAuthStore } from '../../src/store/useAuthStore';
 
 const COUNTRY_CODES = [
-  { code: '+91', country: 'India', flag: '🇮🇳' },
-  { code: '+1', country: 'USA', flag: '🇺🇸' },
-  { code: '+44', country: 'UK', flag: '🇬🇧' },
-  { code: '+971', country: 'UAE', flag: '🇦🇪' },
-  { code: '+61', country: 'Australia', flag: '🇦🇺' },
-  { code: '+1', country: 'Canada', flag: '🇨🇦' },
-  { code: '+65', country: 'Singapore', flag: '🇸🇬' },
-  { code: '+49', country: 'Germany', flag: '🇩🇪' },
-  { code: '+33', country: 'France', flag: '🇫🇷' },
-  { code: '+81', country: 'Japan', flag: '🇯🇵' },
+  { code: '+91', country: 'India', flag: '🇮🇳', short: 'IN' },
+  { code: '+1', country: 'USA', flag: '🇺🇸', short: 'US' },
+  { code: '+44', country: 'UK', flag: '🇬🇧', short: 'GB' },
+  { code: '+971', country: 'UAE', flag: '🇦🇪', short: 'AE' },
+  { code: '+61', country: 'Australia', flag: '🇦🇺', short: 'AU' },
+  { code: '+1', country: 'Canada', flag: '🇨🇦', short: 'CA' },
+  { code: '+65', country: 'Singapore', flag: '🇸🇬', short: 'SG' },
+  { code: '+49', country: 'Germany', flag: '🇩🇪', short: 'DE' },
+  { code: '+33', country: 'France', flag: '🇫🇷', short: 'FR' },
+  { code: '+81', country: 'Japan', flag: '🇯🇵', short: 'JP' },
 ];
 
 export default function Login() {
@@ -43,15 +43,19 @@ export default function Login() {
   const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const isWeb = Platform.OS === 'web';
   const isSmall = windowWidth < 400;
   const isVerySmall = windowWidth < 360;
-  const responsiveSpacing = isVerySmall ? 12 : (isSmall ? SPACING.md : SPACING.xl);
+  // Use smaller padding on web so content fits inside the 400px mobile frame
+  const responsiveSpacing = isWeb
+    ? SPACING.md  // 16px on web
+    : isVerySmall ? 12 : (isSmall ? SPACING.md : SPACING.xl);
   const brandFontSize = isVerySmall ? 26 : (isSmall ? 32 : 40);
   const inputFontSize = isVerySmall ? 15 : 18;
-  const countryCodeWidth = isVerySmall ? 65 : 80;
-  
-  const filteredCountries = COUNTRY_CODES.filter(c => 
-    c.country.toLowerCase().includes(searchQuery.toLowerCase()) || 
+
+
+  const filteredCountries = COUNTRY_CODES.filter(c =>
+    c.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.code.includes(searchQuery)
   );
 
@@ -62,8 +66,8 @@ export default function Login() {
   };
 
   const renderCountryItem = ({ item }: { item: typeof COUNTRY_CODES[0] }) => (
-    <TouchableOpacity 
-      style={[styles.countryItem, { borderBottomColor: activeColors.border }]} 
+    <TouchableOpacity
+      style={[styles.countryItem, { borderBottomColor: activeColors.border }]}
       onPress={() => {
         setSelectedCountry(item);
         setIsPickerVisible(false);
@@ -72,32 +76,32 @@ export default function Login() {
     >
       <Text style={styles.countryFlag}>{item.flag}</Text>
       <Text style={[styles.countryName, { color: activeColors.textDark }]}>{item.country}</Text>
-      <Text style={[styles.countryCodeValue, { color: activeColors.textGray }]}>{item.code}</Text>
+      <Text style={[styles.countryCodeValue, { color: activeColors.primary }]}>{item.code}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View style={[styles.container, { backgroundColor: activeColors.background }]}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1, width: '100%' }}
         enabled={Platform.OS !== 'web'}
       >
-        <ScrollView 
+        <ScrollView
           style={{ flex: 1, width: '100%' }}
           contentContainerStyle={[
             styles.scrollContent,
-            { 
+            {
               paddingHorizontal: responsiveSpacing,
               paddingTop: Platform.OS === 'web' ? SPACING.xl : insets.top + SPACING.xl
             }
-          ]} 
+          ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           <View style={[
-            styles.header, 
-            { 
+            styles.header,
+            {
               marginBottom: isSmall ? SPACING.xl : SPACING.xxl * 1.5,
               width: '100%'
             }
@@ -105,22 +109,32 @@ export default function Login() {
             <Text style={[styles.welcomeText, { color: activeColors.textGray }]}>Welcome to</Text>
             <Text style={[
               styles.brandText,
-              { fontSize: brandFontSize, color: activeColors.primary }
+              { fontSize: brandFontSize, color: activeColors.textDark }
             ]}>Lady Pilot</Text>
-            <Text style={[styles.subtitle, { color: activeColors.accent }]}>Captain Application</Text>
+            <Text style={[styles.subtitle, { color: activeColors.primary }]}>Captain Application</Text>
           </View>
 
           <View style={[styles.formContainer, { width: '100%' }]}>
             <Text style={[styles.label, { color: activeColors.textDark }]}>Enter Mobile Number</Text>
-            <View style={[styles.inputContainer, { height: isVerySmall ? 54 : 60, backgroundColor: activeColors.cardBackground, borderColor: activeColors.border }]}>
-              <TouchableOpacity 
-                style={[styles.countryCodeSelector, { width: countryCodeWidth, borderRightColor: activeColors.border }]}
+            <View style={[
+              styles.inputContainer,
+              {
+                height: isVerySmall ? 54 : 60,
+                backgroundColor: activeColors.cardBackground,
+                borderColor: activeColors.border
+              }
+            ]}>
+              <TouchableOpacity
+                style={[styles.countryCodeSelector, { borderRightColor: activeColors.border }]}
                 onPress={() => setIsPickerVisible(true)}
               >
-                <Text style={[styles.countryCodeText, { fontSize: isVerySmall ? 14 : 16, color: activeColors.textDark }]}>{selectedCountry.code}</Text>
-                <ChevronDown size={14} color={activeColors.textDark} style={{ marginLeft: 2 }} />
+                <Text style={styles.flagText}>{selectedCountry.flag}</Text>
+                <Text style={[styles.countryCodeText, { fontSize: isVerySmall ? 13 : 15, color: activeColors.textDark }]}>
+                  {selectedCountry.code}
+                </Text>
+                <ChevronDown size={13} color={activeColors.textDark} />
               </TouchableOpacity>
-              
+
               <TextInput
                 style={[styles.input, { fontSize: inputFontSize, color: activeColors.textDark }]}
                 placeholder="00000 00000"
@@ -137,13 +151,13 @@ export default function Login() {
               We will send an OTP to verify your number.
             </Text>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.button, 
+                styles.button,
                 { backgroundColor: activeColors.primary },
                 phoneNumber.length !== 10 && styles.buttonDisabled,
                 { width: '100%' }
-              ]} 
+              ]}
               onPress={handleLogin}
               disabled={phoneNumber.length !== 10}
             >
@@ -162,44 +176,78 @@ export default function Login() {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Country Code Picker Modal */}
-      <Modal
-        visible={isPickerVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setIsPickerVisible(false)}
-      >
-        <View style={[styles.modalOverlay, { backgroundColor: activeColors.overlay }]}>
-          <View style={[styles.modalContent, { height: windowHeight * 0.7, backgroundColor: activeColors.cardBackground }]}>
-            <View style={[styles.modalHeader, { borderBottomColor: activeColors.border }]}>
-              <Text style={[styles.modalTitle, { color: activeColors.textDark }]}>Select Country</Text>
-              <TouchableOpacity onPress={() => setIsPickerVisible(false)}>
-                <X size={24} color={activeColors.textDark} />
-              </TouchableOpacity>
-            </View>
+      {/* Country Picker: inline on web (stays inside mobile frame), Modal on native */}
+      {isWeb ? (
+        isPickerVisible && (
+          <View style={styles.webPickerOverlay}>
+            <View style={[styles.webPickerSheet, { backgroundColor: activeColors.cardBackground }]}>
+              <View style={[styles.modalHeader, { borderBottomColor: activeColors.border }]}>
+                <Text style={[styles.modalTitle, { color: activeColors.textDark }]}>Select Country</Text>
+                <TouchableOpacity onPress={() => { setIsPickerVisible(false); setSearchQuery(''); }}>
+                  <X size={24} color={activeColors.textDark} />
+                </TouchableOpacity>
+              </View>
 
-            <View style={[styles.searchContainer, { backgroundColor: activeColors.background, borderColor: activeColors.border }]}>
-              <Search size={20} color={activeColors.textGray} />
-              <TextInput
-                style={[styles.searchInput, { color: activeColors.textDark }]}
-                placeholder="Search country or code"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholderTextColor={activeColors.textGray}
-                autoFocus={Platform.OS === 'web'}
+              <View style={[styles.searchContainer, { backgroundColor: activeColors.background, borderColor: activeColors.border }]}>
+                <Search size={18} color={activeColors.textGray} />
+                <TextInput
+                  style={[styles.searchInput, { color: activeColors.textDark }]}
+                  placeholder="Search country or code"
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholderTextColor={activeColors.textGray}
+                />
+              </View>
+
+              <FlatList
+                data={filteredCountries}
+                renderItem={renderCountryItem}
+                keyExtractor={(item, index) => index.toString()}
+                showsVerticalScrollIndicator={false}
+                style={{ maxHeight: 280 }}
+                contentContainerStyle={{ paddingBottom: SPACING.xl }}
               />
             </View>
-
-            <FlatList
-              data={filteredCountries}
-              renderItem={renderCountryItem}
-              keyExtractor={(item, index) => index.toString()}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: SPACING.xl }}
-            />
           </View>
-        </View>
-      </Modal>
+        )
+      ) : (
+        <Modal
+          visible={isPickerVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setIsPickerVisible(false)}
+        >
+          <View style={[styles.modalOverlay, { backgroundColor: activeColors.overlay }]}>
+            <View style={[styles.modalContent, { height: windowHeight * 0.7, backgroundColor: activeColors.cardBackground }]}>
+              <View style={[styles.modalHeader, { borderBottomColor: activeColors.border }]}>
+                <Text style={[styles.modalTitle, { color: activeColors.textDark }]}>Select Country</Text>
+                <TouchableOpacity onPress={() => setIsPickerVisible(false)}>
+                  <X size={24} color={activeColors.textDark} />
+                </TouchableOpacity>
+              </View>
+
+              <View style={[styles.searchContainer, { backgroundColor: activeColors.background, borderColor: activeColors.border }]}>
+                <Search size={20} color={activeColors.textGray} />
+                <TextInput
+                  style={[styles.searchInput, { color: activeColors.textDark }]}
+                  placeholder="Search country or code"
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholderTextColor={activeColors.textGray}
+                />
+              </View>
+
+              <FlatList
+                data={filteredCountries}
+                renderItem={renderCountryItem}
+                keyExtractor={(item, index) => index.toString()}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: SPACING.xl }}
+              />
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 }
@@ -230,13 +278,13 @@ const styles = StyleSheet.create({
   },
   brandText: {
     fontFamily: FONTS.poppins.bold,
-    color: COLORS.primary,
+    color: COLORS.textDark,
     marginTop: -5,
   },
   subtitle: {
     fontFamily: FONTS.poppins.semiBold,
     fontSize: 16,
-    color: COLORS.accent,
+    color: COLORS.primary,
     marginTop: -5,
   },
   formContainer: {
@@ -268,6 +316,12 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     height: '100%',
     justifyContent: 'center',
+    paddingHorizontal: 10,
+    gap: 4,
+    minWidth: 95,
+  },
+  flagText: {
+    fontSize: 18,
   },
   countryCodeText: {
     fontFamily: FONTS.inter.semiBold,
@@ -285,7 +339,6 @@ const styles = StyleSheet.create({
       },
     }),
   },
-
   infoText: {
     fontFamily: FONTS.inter.regular,
     fontSize: 13,
@@ -330,6 +383,26 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontFamily: FONTS.inter.medium,
   },
+
+  // Web inline picker (stays inside mobile frame)
+  webPickerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  webPickerSheet: {
+    backgroundColor: COLORS.background,
+    borderTopLeftRadius: BORDER_RADIUS.xl,
+    borderTopRightRadius: BORDER_RADIUS.xl,
+    padding: SPACING.xl,
+    paddingBottom: SPACING.xxl,
+  },
+
+  // Native modal
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -346,6 +419,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: SPACING.xl,
+    borderBottomWidth: 1,
+    paddingBottom: SPACING.md,
   },
   modalTitle: {
     fontFamily: FONTS.poppins.bold,

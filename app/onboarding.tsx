@@ -76,7 +76,8 @@ const OnboardingItem = ({ item, scrollX, index, width }: any) => {
 export default function Onboarding() {
   const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
-  const width = Platform.OS === 'web' ? Math.min(windowWidth, 450) : windowWidth;
+  const width = Platform.OS === 'web' ? Math.min(windowWidth, 400) : windowWidth;
+
   const { setFirstTime } = useAuthStore();
   const scrollX = useSharedValue(0);
   const [currentIndex, setCurrentIndex] = useState(0);

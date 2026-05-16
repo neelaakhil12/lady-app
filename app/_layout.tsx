@@ -105,14 +105,17 @@ export default function RootLayout() {
   const content = <AppContent />;
 
   const layout = Platform.OS === 'web' ? (
-    <View style={[styles.webContainer, { backgroundColor: isDarkMode ? '#000' : '#f0f2f5' }]}>
+    <View style={[styles.webContainer, { backgroundColor: '#331a5e' }]}>
       <View style={[
         styles.webFrame,
         { 
-          width: windowWidth > 450 ? 450 : '100%',
-          maxWidth: windowWidth > 450 ? 450 : '100%',
-          borderWidth: windowWidth > 450 ? 1 : 0,
-          borderColor: activeColors.border,
+          width: windowWidth > 450 ? 400 : '100%',
+          maxWidth: windowWidth > 450 ? 400 : '100%',
+          height: windowWidth > 450 ? '98%' : '100%',
+          maxHeight: windowWidth > 450 ? 950 : '100%',
+          borderWidth: windowWidth > 450 ? 10 : 0,
+          borderColor: '#111827',
+          borderRadius: windowWidth > 450 ? 40 : 0,
           backgroundColor: activeColors.background,
           ...(windowWidth > 450 ? SHADOWS.heavy : {}),
         }
@@ -121,6 +124,8 @@ export default function RootLayout() {
       </View>
     </View>
   ) : content;
+
+
 
   return (
     <SafeAreaProvider style={{ backgroundColor: activeColors.background }}>
