@@ -46,7 +46,8 @@ function AppContent() {
 }
 
 export default function RootLayout() {
-  const { width: windowWidth } = useWindowDimensions();
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+
   const { isDarkMode } = useAuthStore();
   const activeColors = isDarkMode ? DARK_COLORS : COLORS;
   const [assetsLoaded, setAssetsLoaded] = useState(false);
@@ -104,26 +105,46 @@ export default function RootLayout() {
 
   const content = <AppContent />;
 
+  const isLaptop = windowWidth > 450;
+
   const layout = Platform.OS === 'web' ? (
     <View style={[styles.webContainer, { backgroundColor: '#331a5e' }]}>
+      {/* Outer phone shell */}
       <View style={[
-        styles.webFrame,
-        { 
-          width: windowWidth > 450 ? 400 : '100%',
-          maxWidth: windowWidth > 450 ? 400 : '100%',
-          height: windowWidth > 450 ? '98%' : '100%',
-          maxHeight: windowWidth > 450 ? 950 : '100%',
-          borderWidth: windowWidth > 450 ? 10 : 0,
-          borderColor: '#111827',
-          borderRadius: windowWidth > 450 ? 40 : 0,
-          backgroundColor: activeColors.background,
-          ...(windowWidth > 450 ? SHADOWS.heavy : {}),
-        }
+        styles.phoneShell,
+        isLaptop ? {
+          width: 390,
+          height: Math.min(windowHeight * 0.92, 844),
+          borderRadius: 52,
+          backgroundColor: '#000000',
+
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 24 },
+          shadowOpacity: 0.55,
+          shadowRadius: 40,
+          elevation: 30,
+        } : { width: '100%', height: '100%', borderRadius: 0, backgroundColor: activeColors.background }
       ]}>
-        {content}
+        {/* Inner app content area */}
+        <View style={[
+          styles.webFrame,
+          isLaptop ? {
+            margin: 12,
+            borderRadius: 42,
+            overflow: 'hidden',
+            backgroundColor: activeColors.background,
+            flex: 1,
+          } : {
+            flex: 1,
+            backgroundColor: activeColors.background,
+          }
+        ]}>
+          {content}
+        </View>
       </View>
     </View>
   ) : content;
+
 
 
 
@@ -140,9 +161,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    height: '100%',
+  },
+  phoneShell: {
+    alignItems: 'stretch',
+    justifyContent: 'center',
   },
   webFrame: {
     height: '100%',
     overflow: 'hidden',
   },
 });
+
