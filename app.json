@@ -39,8 +39,7 @@
           "locationAlwaysPermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ],
-      "expo-image-picker",
-      "react-native-maps"
+      "expo-image-picker"
     ],
     "extra": {
       "router": {},
