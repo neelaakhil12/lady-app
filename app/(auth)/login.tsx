@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     height: '100%',
     ...Platform.select({
       web: {
-        outlineStyle: 'none',
+        outlineStyle: 'none' as any,
       },
     }),
   },
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     color: COLORS.textDark,
     ...Platform.select({
       web: {
-        outlineStyle: 'none',
+        outlineStyle: 'none' as any,
       },
     }),
   },

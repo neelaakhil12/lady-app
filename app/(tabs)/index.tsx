@@ -588,57 +588,6 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   menuContent: {
-    width: '75%',
-    height: '100%',
-    alignSelf: 'flex-end',
-    padding: SPACING.lg,
-    ...SHADOWS.heavy,
-  },
-  menuHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: SPACING.xl,
-  },
-  menuTitle: {
-    fontFamily: FONTS.poppins.bold,
-    fontSize: 18,
-    color: COLORS.textDark,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    height: 60,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-    paddingHorizontal: SPACING.md,
-    alignItems: 'center',
-  },
-  menuIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: SPACING.md,
-  },
-  menuItemContent: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  menuItemText: {
-    fontWeight: 'bold',
-    fontSize: 17,
-  },
-  menuOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    zIndex: 1000,
-  },
-  menuContent: {
     width: '85%',
     height: '100%',
     alignSelf: 'flex-end',
@@ -669,6 +618,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: SPACING.md,
+  },
+  menuItemContent: {
+    flex: 1,
+    justifyContent: 'center',
   },
   menuItemText: {
     fontFamily: FONTS.poppins.semiBold,

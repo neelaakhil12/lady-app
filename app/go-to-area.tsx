@@ -6,12 +6,11 @@ import {
   TouchableOpacity, 
   ScrollView,
   Switch,
-  Platform,
-  SafeAreaView
+  Platform
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, MapPin, Heart, Trash2, Plus, Home, Briefcase, Info } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, DARK_COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../src/constants/theme';
 import { useAuthStore } from '../src/store/useAuthStore';
 

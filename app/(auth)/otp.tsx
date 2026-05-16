@@ -104,7 +104,7 @@ export default function OTP() {
             {otp.map((digit, index) => (
               <TextInput
                 key={index}
-                ref={(ref) => (inputRefs.current[index] = ref as TextInput)}
+                ref={(ref) => { inputRefs.current[index] = ref as TextInput; }}
                 style={[
                   styles.otpInput,
                   { 
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     ...SHADOWS.light,
     ...Platform.select({
       web: {
-        outlineStyle: 'none',
+        outlineStyle: 'none' as any,
       },
     }),
   },

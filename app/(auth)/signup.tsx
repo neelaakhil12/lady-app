@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     color: COLORS.textDark,
     ...Platform.select({
       web: {
-        outlineStyle: 'none',
+        outlineStyle: 'none' as any,
       },
     }),
   },

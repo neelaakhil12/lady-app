@@ -5,12 +5,11 @@ import {
   Text, 
   TouchableOpacity, 
   ScrollView, 
-  SafeAreaView, 
   Platform,
   Linking
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { 
   ArrowLeft, 
   Phone, 
