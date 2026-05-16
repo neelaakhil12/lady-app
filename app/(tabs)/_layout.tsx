@@ -17,8 +17,8 @@ export default function TabLayout() {
         tabBarStyle: {
           borderTopWidth: 1,
           borderTopColor: activeColors.border,
-          height: Platform.OS === 'web' ? 90 : 65,
-          paddingBottom: Platform.OS === 'web' ? 35 : 10,
+          height: Platform.OS === 'web' ? 90 : 70,
+          paddingBottom: Platform.OS === 'web' ? 35 : 12,
           paddingTop: 10,
           backgroundColor: activeColors.cardBackground,
           ...SHADOWS.medium,
@@ -27,12 +27,10 @@ export default function TabLayout() {
           left: 0,
           right: 0,
         },
-        tabBarItemStyle: {
-          height: 50,
-        },
         tabBarLabelStyle: {
           fontFamily: FONTS.inter.medium,
           fontSize: 12,
+          marginTop: 2,
         },
         headerShown: false,
       }}
