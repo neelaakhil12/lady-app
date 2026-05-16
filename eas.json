@@ -10,7 +10,11 @@
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "image": "ubuntu-22.04-jdk-17-ndk-r23b-sdk-33"
+      },
+      "env": {
+        "EAS_BUILD_NEW_ARCH": "0"
       }
     },
     "production": {}
